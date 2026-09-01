@@ -131,6 +131,117 @@
           </button>
         </div>
       </div>
+
+      <!-- System Settings & Preferences Modal -->
+      <div id="settings-modal" class="settings-modal-backdrop hidden">
+        <div class="settings-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+          <div class="border-beam"></div>
+          
+          <div class="settings-header">
+            <div class="settings-header-left">
+              <i data-lucide="sliders" style="width:18px;height:18px;color:var(--mono-white);"></i>
+              <h2 id="settings-title" class="settings-modal-title">System Settings & Engine Preferences</h2>
+            </div>
+            <button id="settings-close-btn" class="settings-close-btn" aria-label="Close Settings">✕</button>
+          </div>
+
+          <div class="settings-body-grid">
+            
+            <!-- Section 1: Vision & Sensor Settings -->
+            <div class="settings-section">
+              <div class="settings-sec-title"><i data-lucide="scan" style="width:13px;height:13px;"></i> Computer Vision & Sensors</div>
+              
+              <div class="settings-row">
+                <div>
+                  <strong>Camera Target Framerate</strong>
+                  <p>Target FPS for on-device MediaPipe landmark tracking</p>
+                </div>
+                <div class="settings-pill-group" id="settings-fps-group">
+                  <button class="settings-pill" data-fps="30">30 FPS</button>
+                  <button class="settings-pill active" data-fps="60">60 FPS</button>
+                </div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <strong>Gesture Hold Threshold</strong>
+                  <p>Steady hold duration before committing recognized sign</p>
+                </div>
+                <div class="settings-pill-group" id="settings-hold-group">
+                  <button class="settings-pill" data-hold="0.8">0.8s (Fast)</button>
+                  <button class="settings-pill active" data-hold="1.2">1.2s (Normal)</button>
+                  <button class="settings-pill" data-hold="1.8">1.8s (Relaxed)</button>
+                </div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <strong>21-Point Landmark Overlay</strong>
+                  <p>Display real-time wireframe skeleton mesh on camera</p>
+                </div>
+                <label class="tactile-switch">
+                  <input type="checkbox" id="settings-landmark-toggle" checked>
+                  <span class="switch-groove"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Section 2: Neural Speech & Voice -->
+            <div class="settings-section">
+              <div class="settings-sec-title"><i data-lucide="volume-2" style="width:13px;height:13px;"></i> Audio & Speech Synthesis</div>
+              
+              <div class="settings-row">
+                <div>
+                  <strong>Speech Playback Speed</strong>
+                  <p>Speaking rate for synthesized text-to-speech voice</p>
+                </div>
+                <div class="settings-pill-group" id="settings-tts-speed-group">
+                  <button class="settings-pill" data-tts-speed="0.85">0.85×</button>
+                  <button class="settings-pill active" data-tts-speed="1.0">1.0×</button>
+                  <button class="settings-pill" data-tts-speed="1.25">1.25×</button>
+                </div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <strong>Auto-Voice Signed Sentences</strong>
+                  <p>Automatically read accumulated sentences aloud when paused</p>
+                </div>
+                <label class="tactile-switch">
+                  <input type="checkbox" id="settings-auto-voice-toggle" checked>
+                  <span class="switch-groove"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Section 3: Storage & Offline Cache -->
+            <div class="settings-section">
+              <div class="settings-sec-title"><i data-lucide="hard-drive" style="width:13px;height:13px;"></i> PWA Offline Cache & Storage</div>
+              
+              <div class="settings-row">
+                <div>
+                  <strong>Cache Status</strong>
+                  <p id="settings-cache-status">146 sign media assets cached locally for offline telepresence</p>
+                </div>
+                <button id="settings-clear-cache-btn" class="settings-action-btn danger">
+                  <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Clear Cache
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="settings-footer">
+            <div class="settings-sys-info">
+              <span>OmniSign AI v2.0.0 Pro &bull; MediaPipe WebAssembly &bull; Private On-Device ML</span>
+            </div>
+            <button id="settings-save-btn" class="landing-btn landing-btn-primary" style="padding:7px 18px;font-size:12px;">
+              <span>Done</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
     </header>
 
     <!-- ================= MAIN WORKSPACE ================= -->

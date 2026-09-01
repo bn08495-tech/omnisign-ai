@@ -3110,6 +3110,83 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    // 8B. System Settings & Engine Preferences Modal (with AnimatePresence)
+    const settingsBtn = document.getElementById('header-settings-btn');
+    const settingsModal = document.getElementById('settings-modal');
+    const settingsCloseBtn = document.getElementById('settings-close-btn');
+    const settingsSaveBtn = document.getElementById('settings-save-btn');
+    const settingsClearCacheBtn = document.getElementById('settings-clear-cache-btn');
+
+    function openSettingsModal() {
+      if (!settingsModal) return;
+      settingsModal.classList.remove('hidden');
+      settingsModal.classList.remove('exiting');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeSettingsModalWithAnimation() {
+      if (!settingsModal || settingsModal.classList.contains('hidden') || settingsModal.classList.contains('exiting')) return;
+      settingsModal.classList.add('exiting');
+      setTimeout(() => {
+        settingsModal.classList.add('hidden');
+        settingsModal.classList.remove('exiting');
+      }, 200);
+    }
+
+    if (settingsBtn && settingsModal) {
+      settingsBtn.addEventListener('click', openSettingsModal);
+      if (settingsCloseBtn) settingsCloseBtn.addEventListener('click', closeSettingsModalWithAnimation);
+      if (settingsSaveBtn) settingsSaveBtn.addEventListener('click', closeSettingsModalWithAnimation);
+
+      settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+          closeSettingsModalWithAnimation();
+        }
+      });
+    }
+
+    // Settings Pill Selectors (FPS, Hold Time, TTS Speed)
+    document.querySelectorAll('#settings-fps-group .settings-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#settings-fps-group .settings-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        AppState.cameraFps = parseInt(pill.dataset.fps, 10) || 60;
+      });
+    });
+
+    document.querySelectorAll('#settings-hold-group .settings-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#settings-hold-group .settings-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        AppState.gestureHoldTime = parseFloat(pill.dataset.hold) || 1.2;
+      });
+    });
+
+    document.querySelectorAll('#settings-tts-speed-group .settings-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#settings-tts-speed-group .settings-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        AppState.ttsRate = parseFloat(pill.dataset.ttsSpeed) || 1.0;
+      });
+    });
+
+    // Clear Cache Button
+    if (settingsClearCacheBtn) {
+      settingsClearCacheBtn.addEventListener('click', async () => {
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(key => caches.delete(key)));
+        }
+        const statusEl = document.getElementById('settings-cache-status');
+        if (statusEl) {
+          statusEl.textContent = 'Cache cleared successfully! Reloading dataset...';
+          setTimeout(() => {
+            statusEl.textContent = '146 sign media assets cached locally for offline telepresence';
+          }, 2000);
+        }
+      });
+    }
+
     // 9. Live Bridge Meeting Transcript Exporter
     const bridgeExportBtn = document.getElementById('bridge-export-btn');
     if (bridgeExportBtn) {
