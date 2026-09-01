@@ -1,6 +1,13 @@
 # 🤟 OmniSign AI - Two-Way Sign Language & Voice Translator
 
-An intelligent, real-time **Two-Way Sign Language and Voice/Speech Communication System** inspired by [aniketdhole07/two-way-sign-language-translator](https://github.com/aniketdhole07/two-way-sign-language-translator).
+An intelligent, real-time **Two-Way Sign Language and Voice/Speech Communication System** powered by OpenCV, TensorFlow, MediaPipe, and FastAPI.
+
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-black?style=flat&logo=github)](https://github.com/bn08495-tech/omnisign-ai)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live_Demo-black?style=flat&logo=vercel)](https://omnisign-ai.vercel.app)
+
+* 🌐 **Live Web Application**: [https://omnisign-ai.vercel.app](https://omnisign-ai.vercel.app)
+* 🐙 **GitHub Repository**: [https://github.com/bn08495-tech/omnisign-ai](https://github.com/bn08495-tech/omnisign-ai)
+* 📚 **API Documentation**: [https://omnisign-ai.vercel.app/docs](https://omnisign-ai.vercel.app/docs)
 
 ---
 
