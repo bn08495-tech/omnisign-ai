@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniSign AI - Two-Way Sign Language & Voice System</title>
+  <meta name="description" content="State-of-the-art bidirectional sign language and voice telepresence bridge with real-time computer vision and animated sign synthesis.">
+
+  <!-- Typography: Plus Jakarta Sans (Display) + Inter (Body) + JetBrains Mono (Telemetry/Tokens) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  
+  <!-- MediaPipe Hands, FaceMesh & Camera Utils -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+  
+  <!-- PWA Manifest & Theme -->
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" sizes="192x192" href="/static/icon-192.png">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Ambient background lighting mesh -->
+  <div class="ambient-glow glow-top"></div>
+  <div class="ambient-glow glow-bottom"></div>
+
+  <!-- Top Motion Scroll Progress Bar (Motion.dev style) -->
+  <div id="motion-scroll-progress" class="motion-scroll-progress-bar"></div>
+
+  <div class="app-container">
+    
+    <!-- ================= TOP NAVIGATION BAR (Stitch Standard) ================= -->
+    <header class="app-header">
+      <div class="header-brand" id="brand-home-btn" role="button" tabindex="0" title="Go to Home Overview" style="cursor: pointer;" data-magnetic="true">
+        <h1 class="brand-title">OmniSign AI</h1>
+        <span class="badge-studio">PRO 2.0</span>
+      </div>
+
+      <!-- Segmented Navigation Dock with Sliding Motion Pill -->
+      <nav class="nav-dock" role="tablist" aria-label="Main Navigation">
+        <div class="nav-dock-indicator" id="nav-dock-indicator"></div>
+        <button class="nav-tab active" data-tab="home" role="tab" id="tab-btn-home" aria-selected="true" title="Overview & Landing Page">
+          <i data-lucide="sparkles" style="width:16px;height:16px;"></i>
+          <span>Overview</span>
+        </button>
+        <button class="nav-tab" data-tab="bridge" role="tab" id="tab-btn-bridge" aria-selected="false">
+          <i data-lucide="message-square" style="width:16px;height:16px;"></i>
+          <span>Bridge</span>
+        </button>
+        <button class="nav-tab" data-tab="v2s" role="tab" id="tab-btn-v2s" aria-selected="false">
+          <i data-lucide="mic" style="width:16px;height:16px;"></i>
+          <span>V2S</span>
+        </button>
+        <button class="nav-tab" data-tab="s2v" role="tab" id="tab-btn-s2v" aria-selected="false">
+          <i data-lucide="camera" style="width:16px;height:16px;"></i>
+          <span>S2V</span>
+        </button>
+        <button class="nav-tab" data-tab="dictionary" role="tab" id="tab-btn-dictionary" aria-selected="false">
+          <i data-lucide="book-open" style="width:16px;height:16px;"></i>
+          <span>Dictionary</span>
+        </button>
+        <button class="nav-tab" data-tab="practice" role="tab" id="tab-btn-practice" aria-selected="false">
+          <i data-lucide="award" style="width:16px;height:16px;"></i>
+          <span>Practice</span>
+        </button>
+      </nav>
+
+      <!-- Right Header Actions & Dialect Switcher -->
+      <div class="header-actions">
+        <div class="dialect-selector-group">
+          <i data-lucide="globe" style="width:14px;height:14px;color:var(--mono-400);"></i>
+          <select id="app-dialect-select" class="dialect-dropdown" title="Select Sign Language Dialect">
+            <option value="ASL" selected>ASL (American)</option>
+            <option value="ISL">ISL (Indian)</option>
+            <option value="BSL">BSL (British 2-Hand)</option>
+            <option value="AUSLAN">Auslan (Australian)</option>
+          </select>
+          <span class="dialect-pill" id="header-dialect-pill">ASL</span>
+        </div>
+
+        <!-- Accessibility Ergonomics Button -->
+        <button class="action-icon-btn" id="header-a11y-btn" title="Accessibility & Contrast Controls" aria-label="Accessibility" data-magnetic="true">
+          <i data-lucide="eye" style="width:18px;height:18px;"></i>
+        </button>
+
+        <button class="action-icon-btn" id="header-meet-team-btn" title="Meet the Creators" aria-label="Creators" data-magnetic="true">
+          <i data-lucide="users" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="action-icon-btn" id="header-settings-btn" title="System Settings & Cache" aria-label="Settings" data-magnetic="true">
+          <i data-lucide="settings" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+
+      <!-- Floating Accessibility Ergonomics Drawer -->
+      <div id="a11y-floating-panel" class="a11y-drawer hidden">
+        <div class="a11y-drawer-header">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <i data-lucide="sparkles" style="width:14px;height:14px;color:var(--mono-white);"></i>
+            <span style="font-size:12px;font-weight:700;font-family:var(--font-mono);">ACCESSIBILITY ERGONOMICS</span>
+          </div>
+          <button id="a11y-close-btn" class="a11y-close-btn">✕</button>
+        </div>
+        <div class="a11y-drawer-options">
+          <button class="a11y-toggle-btn" id="a11y-contrast-toggle">
+            <i data-lucide="contrast" style="width:15px;height:15px;"></i>
+            <span>Ultra High Contrast</span>
+            <span class="a11y-status-pill" id="a11y-contrast-status">OFF</span>
+          </button>
+          <button class="a11y-toggle-btn" id="a11y-dyslexic-toggle">
+            <i data-lucide="type" style="width:15px;height:15px;"></i>
+            <span>Dyslexic Font Readability</span>
+            <span class="a11y-status-pill" id="a11y-dyslexic-status">OFF</span>
+          </button>
+          <button class="a11y-toggle-btn" id="a11y-subtitles-toggle">
+            <i data-lucide="subtitles" style="width:15px;height:15px;"></i>
+            <span>Extra-Large Subtitles</span>
+            <span class="a11y-status-pill" id="a11y-subtitles-status">OFF</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= MAIN WORKSPACE ================= -->
+    <main class="app-main">
+      
+      <!-- ================= TAB: LANDING PAGE OVERVIEW ================= -->
+      <section id="tab-home" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-home">
+        <div class="landing-container">
+          
+          <!-- HERO SECTION -->
+          <div class="landing-hero" data-motion="fade-up">
+            <!-- Dynamic Floating Motion Glow Orbs -->
+            <div class="motion-glow-orb orb-1"></div>
+            <div class="motion-glow-orb orb-2"></div>
+            <div class="motion-glow-orb orb-3"></div>
+
+            <div class="hero-badge" data-hero-stagger="1" data-magnetic="true">
+              <span class="hero-badge-dot"></span>
+              <i data-lucide="sparkles" style="width:14px;height:14px;"></i>
+              <span>NEXT-GEN ACCESSIBILITY PLATFORM 2.0</span>
+            </div>
+
+            <h1 class="landing-hero-title" data-hero-stagger="2">
+              Bridging Voices & Signs with <span class="text-gradient">Real-Time AI Telepresence</span>
+            </h1>
+
+            <p class="landing-hero-subtitle" data-hero-stagger="3">
+              Engineered to eliminate communication barriers between vocal speakers and non-vocal signers. 
+              Powered by fine-tuned OpenCV & TensorFlow hand tracking, phonetic tokenization, and instantaneous bidirectional sign synthesis.
+            </p>
+
+            <div class="landing-hero-actions" data-hero-stagger="4">
+              <button class="landing-btn landing-btn-primary" data-jump-tab="bridge" data-magnetic="true">
+                <span class="btn-shimmer"></span>
+                <i data-lucide="zap" style="width:18px;height:18px;"></i>
+                <span>Launch Live Bridge</span>
+              </button>
+              <button class="landing-btn landing-btn-secondary" data-jump-tab="v2s" data-magnetic="true">
+                <i data-lucide="mic" style="width:18px;height:18px;"></i>
+                <span>Voice to Sign (V2S)</span>
+              </button>
+              <button class="landing-btn landing-btn-secondary" data-jump-tab="s2v" data-magnetic="true">
+                <i data-lucide="camera" style="width:18px;height:18px;"></i>
+                <span>Sign to Voice (S2V)</span>
+              </button>
+              <button class="landing-btn landing-btn-ghost" id="scroll-to-team-btn" data-magnetic="true">
+                <i data-lucide="users" style="width:18px;height:18px;"></i>
+                <span>Meet Creators</span>
+              </button>
+            </div>
+
+            <!-- LIVE INTERACTIVE MOTION GESTURE PLAYGROUND (Motion.dev Signature Component) -->
+            <div class="hero-playground-wrapper" data-hero-stagger="5">
+              <div class="border-beam"></div>
+              <div class="card-spotlight"></div>
+              
+              <div class="playground-header">
+                <div class="playground-header-left">
+                  <div class="playground-status-dot"></div>
+                  <span class="playground-title">INTERACTIVE GESTURE & SYNTHESIS SIMULATOR</span>
+                  <span class="playground-pill">LIVE PREVIEW</span>
+                </div>
+                <div class="playground-header-right">
+                  <div class="playground-live-mesh">
+                    <i data-lucide="activity" style="width:14px;height:14px;color:var(--mono-white);"></i>
+                    <span id="hero-sim-fps">60 FPS</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Gesture Interactive Chips Bar -->
+              <div class="playground-chips-bar">
+                <span class="chips-label"><i data-lucide="sparkles" style="width:12px;height:12px;"></i> Quick Signs:</span>
+                <div class="chips-scroll-area">
+                  <button class="sim-chip active" data-sim-word="morning" data-sim-type="word" data-sim-conf="99.6" data-sim-desc="Sign moving from chin forward into rising sun arm posture" data-sim-spoken="Good morning! Welcome to OmniSign.">☀️ Good Morning</button>
+                  <button class="sim-chip" data-sim-word="weather" data-sim-type="word" data-sim-conf="99.4" data-sim-desc="Both hands forming W-shape undulating downward smoothly" data-sim-spoken="The weather is clear and sunny today.">🌤️ Weather</button>
+                  <button class="sim-chip" data-sim-word="today" data-sim-type="word" data-sim-conf="98.9" data-sim-desc="Both Y-hands dropped downward firmly in front of torso" data-sim-spoken="Today is a great day for communication.">📅 Today</button>
+                  <button class="sim-chip" data-sim-word="everyone" data-sim-type="word" data-sim-conf="99.2" data-sim-desc="Open palm sweeps outward across the entire horizon" data-sim-spoken="Hello everyone, nice to meet you.">👥 Everyone</button>
+                  <button class="sim-chip" data-sim-word="cold" data-sim-type="word" data-sim-conf="99.5" data-sim-desc="Both fists clenched and shivering gently at chest level" data-sim-spoken="It is very cold outside today.">❄️ Cold</button>
+                  <button class="sim-chip" data-sim-word="hot" data-sim-type="word" data-sim-conf="99.1" data-sim-desc="Claw hand pulled quickly outward away from mouth" data-sim-spoken="It is extremely hot this afternoon.">🔥 Hot</button>
+                  <button class="sim-chip" data-sim-word="h_small" data-sim-type="letter" data-sim-conf="99.8" data-sim-desc="Index and middle fingers extended horizontally together" data-sim-spoken="Letter H in American Sign Language.">🔤 Sign H</button>
+                  <button class="sim-chip" data-sim-word="i_small" data-sim-type="letter" data-sim-conf="99.7" data-sim-desc="Pinky finger extended vertically upward with compact fist" data-sim-spoken="Letter I in American Sign Language.">🔤 Sign I</button>
+                </div>
+              </div>
+
+              <!-- Custom Text Input Synthesis Bar -->
+              <div class="playground-custom-bar">
+                <div class="playground-input-wrap">
+                  <i data-lucide="type" style="width:15px;height:15px;color:var(--mono-400);"></i>
+                  <input type="text" id="hero-sim-custom-text" placeholder="Or type any custom word or phrase to synthesize (e.g. 'Good morning everyone', 'Cold ice', 'Hello')..." class="playground-custom-input" />
+                </div>
+                <button id="hero-sim-translate-btn" class="playground-synthesize-btn" data-magnetic="true">
+                  <i data-lucide="sparkles" style="width:14px;height:14px;"></i>
+                  <span>Synthesize Live</span>
+                </button>
+              </div>
+
+              <!-- Stage & Telemetry Display -->
+              <div class="playground-stage-grid">
+                <!-- Visual Sign Canvas Box -->
+                <div class="stage-media-box">
+                  <div class="stage-media-inner">
+                    <img id="hero-sim-img" src="/assets/words/morning.webp" alt="Sign demonstration" class="hero-sim-media" onerror="this.src='/assets/alphabet/h_small.gif'">
+                    <canvas id="hero-sim-canvas" class="hero-sim-canvas-overlay"></canvas>
+                    
+                    <div class="stage-overlay-badge">
+                      <span id="hero-sim-badge-type">WORD SIGN</span>
+                    </div>
+
+                    <div class="stage-watermark-hud">
+                      <span class="hud-tag" id="hero-sim-token-idx">1 / 1</span>
+                      <span class="hud-tag">LANDMARKS: 21 PTS</span>
+                      <span class="hud-tag" id="hero-sim-dialect-hud">ASL 1.0x</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Live Synthesis Telemetry Card -->
+                <div class="stage-telemetry-box">
+                  <div class="telemetry-row">
+                    <div class="telemetry-col">
+                      <span class="telemetry-label">DETECTED TOKEN</span>
+                      <div class="telemetry-value-lg" id="hero-sim-token">"MORNING"</div>
+                    </div>
+                    <div class="telemetry-col" style="text-align: right;">
+                      <span class="telemetry-label">NEURAL CONFIDENCE</span>
+                      <div class="telemetry-conf-wrap">
+                        <span class="telemetry-conf-val" id="hero-sim-conf-text">99.6%</span>
+                        <div class="telemetry-conf-bar">
+                          <div class="telemetry-conf-fill" id="hero-sim-conf-fill" style="width: 99.6%;"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="telemetry-desc-box">
+                    <span class="telemetry-label">KINEMATIC DESCRIPTION</span>
+                    <p class="telemetry-desc" id="hero-sim-desc">Sign moving from chin forward into rising sun arm posture.</p>
+                  </div>
+
+                  <!-- Real-time Web Audio Neon Waveform Oscilloscope -->
+                  <div class="telemetry-audio-box">
+                    <div class="audio-box-header">
+                      <span class="telemetry-label">NEURAL SPEECH STREAM (WEB AUDIO)</span>
+                      <div class="audio-wave-bars" id="hero-sim-wave-bars">
+                        <span class="wave-bar bar-1"></span>
+                        <span class="wave-bar bar-2"></span>
+                        <span class="wave-bar bar-3"></span>
+                        <span class="wave-bar bar-4"></span>
+                        <span class="wave-bar bar-5"></span>
+                      </div>
+                    </div>
+                    <canvas id="hero-sim-audio-canvas" class="hero-audio-oscilloscope" height="36"></canvas>
+                    <div class="audio-transcript-pill" id="hero-sim-audio-text">
+                      <i data-lucide="volume-2" style="width:14px;height:14px;color:var(--mono-white);"></i>
+                      <span>"Good morning! Welcome to OmniSign."</span>
+                    </div>
+                  </div>
+
+                  <div class="stage-actions">
+                    <button class="stage-btn stage-btn-primary" id="hero-sim-speak-btn" data-magnetic="true">
+                      <i data-lucide="volume-2" style="width:14px;height:14px;"></i>
+                      <span>Hear Spoken Voice</span>
+                    </button>
+                    <button class="stage-btn stage-btn-secondary" id="hero-sim-replay-btn" data-magnetic="true">
+                      <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
+                      <span>Replay Sign</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- LIVE METRIC COUNTERS -->
+            <div class="landing-metrics-grid" data-motion="stagger">
+              <div class="metric-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="metric-value" data-counter="80" data-prefix="&lt; " data-suffix="ms">&lt; 80ms</div>
+                <div class="metric-label">CV Gesture Latency</div>
+                <div class="metric-sub">Real-time landmark tracking</div>
+              </div>
+              <div class="metric-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="metric-value" data-counter="1000" data-suffix="+">1,000+</div>
+                <div class="metric-label">Sign Video & Image Assets</div>
+                <div class="metric-sub">Curated alphabets & word videos</div>
+              </div>
+              <div class="metric-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="metric-value" data-counter="4" data-suffix=" Dialects">4 Dialects</div>
+                <div class="metric-label">Global Sign Systems</div>
+                <div class="metric-sub">ASL, ISL, BSL & Auslan</div>
+              </div>
+              <div class="metric-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="metric-value" data-counter="100" data-suffix="%">100%</div>
+                <div class="metric-label">Client-Side Private ML</div>
+                <div class="metric-sub">No camera data leaves device</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SYSTEM ARCHITECTURE & CORE MODULES -->
+          <div class="landing-section" data-motion="fade-up">
+            <div class="landing-section-header">
+              <span class="section-tag">ENGINEERING & CAPABILITIES</span>
+              <h2 class="section-heading">How OmniSign AI Operates</h2>
+              <p class="section-desc">Our custom logic parses natural speech and physical gestures to achieve low-latency bidirectional translation.</p>
+            </div>
+
+            <div class="landing-features-grid" data-motion="stagger">
+              <!-- Feature 1: V2S -->
+              <div class="feature-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="feature-icon-wrap">
+                  <i data-lucide="mic" style="width:24px;height:24px;"></i>
+                </div>
+                <div class="feature-badge">VOICE TO SIGN</div>
+                <h3 class="feature-title">Speech Tokenizer & Video Asset Synthesizer</h3>
+                <p class="feature-desc">
+                  Captures spoken voice in real time and decomposes speech into phonetic tokens. Matches keywords against our curated sign video database, automatically falling back to precise letter-by-letter fingerspelling sequences (e.g. "HI" &rarr; "H" + "I").
+                </p>
+                <ul class="feature-points">
+                  <li><i data-lucide="check-circle-2"></i> Real-time continuous speech transcription</li>
+                  <li><i data-lucide="check-circle-2"></i> Word-level greedy asset search with letter fallback</li>
+                  <li><i data-lucide="check-circle-2"></i> Frame-accurate playback buffer & timeline</li>
+                </ul>
+                <button class="feature-action-btn" data-jump-tab="v2s">
+                  <span>Try Voice to Sign</span>
+                  <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+                </button>
+              </div>
+
+              <!-- Feature 2: S2V -->
+              <div class="feature-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="feature-icon-wrap">
+                  <i data-lucide="camera" style="width:24px;height:24px;"></i>
+                </div>
+                <div class="feature-badge">SIGN TO VOICE</div>
+                <h3 class="feature-title">Fine-Tuned CV & Hand Position Classifier</h3>
+                <p class="feature-desc">
+                  Leverages MediaPipe, OpenCV, and TensorFlow fine-tuned on custom and open-source sign language datasets. Detects 21 hand landmarks and postures to recognize gestures, frame full sentences, and speak them aloud via natural TTS.
+                </p>
+                <ul class="feature-points">
+                  <li><i data-lucide="check-circle-2"></i> 21 3D hand keypoints with spatial rotation analysis</li>
+                  <li><i data-lucide="check-circle-2"></i> Character & word accumulation buffer</li>
+                  <li><i data-lucide="check-circle-2"></i> Instant neural text-to-speech audio playback</li>
+                </ul>
+                <button class="feature-action-btn" data-jump-tab="s2v">
+                  <span>Try Sign to Voice</span>
+                  <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+                </button>
+              </div>
+
+              <!-- Feature 3: Bridge -->
+              <div class="feature-card highlight-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="feature-icon-wrap">
+                  <i data-lucide="message-square" style="width:24px;height:24px;"></i>
+                </div>
+                <div class="feature-badge">BIDIRECTIONAL BRIDGE</div>
+                <h3 class="feature-title">Two-Way Synchronous Telepresence Room</h3>
+                <p class="feature-desc">
+                  The live meeting engine that harmonizes both pipelines into one screen. Vocal speakers talk naturally and see translated sign visual streams; deaf or mute participants sign to their camera and hear their words articulated instantly.
+                </p>
+                <ul class="feature-points">
+                  <li><i data-lucide="check-circle-2"></i> Unified live video & sign projection stream</li>
+                  <li><i data-lucide="check-circle-2"></i> Real-time synchronized chat log & transcripts</li>
+                  <li><i data-lucide="check-circle-2"></i> Session analytics & latency telemetry</li>
+                </ul>
+                <button class="feature-action-btn" data-jump-tab="bridge">
+                  <span>Launch Live Room</span>
+                  <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- DATA PIPELINE FLOW DIAGRAM -->
+          <div class="landing-section" data-motion="fade-up">
+            <div class="landing-section-header">
+              <span class="section-tag">DATA WORKFLOW</span>
+              <h2 class="section-heading">Bidirectional Translation Pipeline</h2>
+            </div>
+            
+            <div class="pipeline-flow-wrapper">
+              <div class="pipeline-laser-beam"></div>
+              
+              <div class="pipeline-step" data-motion="slide-left">
+                <div class="pipeline-step-num">01</div>
+                <div class="pipeline-step-icon"><i data-lucide="mic"></i> / <i data-lucide="camera"></i></div>
+                <div class="pipeline-step-title">Multi-Modal Input</div>
+                <div class="pipeline-step-desc">Microphone audio stream or camera frame feed at 60 FPS.</div>
+              </div>
+
+              <div class="pipeline-arrow"><i data-lucide="arrow-right"></i></div>
+
+              <div class="pipeline-step" data-motion="fade-up">
+                <div class="pipeline-step-num">02</div>
+                <div class="pipeline-step-icon"><i data-lucide="cpu"></i></div>
+                <div class="pipeline-step-title">Fine-Tuned Processing</div>
+                <div class="pipeline-step-desc">Speech phoneme tokenization & OpenCV / TensorFlow landmark classification.</div>
+              </div>
+
+              <div class="pipeline-arrow"><i data-lucide="arrow-right"></i></div>
+
+              <div class="pipeline-step" data-motion="fade-up">
+                <div class="pipeline-step-num">03</div>
+                <div class="pipeline-step-icon"><i data-lucide="database"></i></div>
+                <div class="pipeline-step-title">Asset & Model Lookup</div>
+                <div class="pipeline-step-desc">Greedy phrase search with fallback to letter fingerspelling dictionary.</div>
+              </div>
+
+              <div class="pipeline-arrow"><i data-lucide="arrow-right"></i></div>
+
+              <div class="pipeline-step" data-motion="slide-right">
+                <div class="pipeline-step-num">04</div>
+                <div class="pipeline-step-icon"><i data-lucide="volume-2"></i> / <i data-lucide="video"></i></div>
+                <div class="pipeline-step-title">Instant Synthesis</div>
+                <div class="pipeline-step-desc">High-framerate sign video rendering & neural voice text-to-speech.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MEET THE TEAM SECTION -->
+          <div class="landing-section" id="landing-team-section" data-motion="fade-up">
+            <div class="landing-section-header">
+              <span class="section-tag">THE CREATORS</span>
+              <h2 class="section-heading">Meet the Engineering Team</h2>
+              <p class="section-desc">The developers, designers, and researchers who conceived, gathered assets for, and brought OmniSign AI to life.</p>
+            </div>
+
+            <div class="team-grid" data-motion="stagger">
+              <!-- Member 1: Stotra Gandhi -->
+              <div class="team-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="team-card-header">
+                  <div class="team-avatar">
+                    <span>SG</span>
+                  </div>
+                  <div class="team-meta">
+                    <h3 class="team-name">Stotra Gandhi</h3>
+                    <div class="team-role-pill">Team Lead & Logic Builder</div>
+                  </div>
+                </div>
+                <p class="team-bio">
+                  Spearheaded the project vision and core algorithmic architecture. Designed the bidirectional translation pipeline, phonetic speech tokenization heuristics, word-level greedy matching, and fallback letter fingerspelling logic.
+                </p>
+                <div class="team-skills">
+                  <span class="skill-tag">Project Lead</span>
+                  <span class="skill-tag">Core Translation Logic</span>
+                  <span class="skill-tag">Tokenizer Heuristics</span>
+                  <span class="skill-tag">Bidirectional Sync</span>
+                </div>
+              </div>
+
+              <!-- Member 2: Dhruvesh Shah -->
+              <div class="team-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="team-card-header">
+                  <div class="team-avatar">
+                    <span>DS</span>
+                  </div>
+                  <div class="team-meta">
+                    <h3 class="team-name">Dhruvesh Shah</h3>
+                    <div class="team-role-pill">Designer & Head of UI/UX</div>
+                  </div>
+                </div>
+                <p class="team-bio">
+                  Led the aesthetic direction and user experience design. Conceived the monochrome glassmorphism visual language, accessible high-contrast color hierarchy, telemetry panels, and intuitive multi-mode user journeys.
+                </p>
+                <div class="team-skills">
+                  <span class="skill-tag">Head of UI/UX</span>
+                  <span class="skill-tag">Design System</span>
+                  <span class="skill-tag">Accessibility (a11y)</span>
+                  <span class="skill-tag">Interaction Design</span>
+                </div>
+              </div>
+
+              <!-- Member 3: Virang Shah -->
+              <div class="team-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="team-card-header">
+                  <div class="team-avatar">
+                    <span>VS</span>
+                  </div>
+                  <div class="team-meta">
+                    <h3 class="team-name">Virang Shah</h3>
+                    <div class="team-role-pill">CI/CD Lead</div>
+                  </div>
+                </div>
+                <p class="team-bio">
+                  Engineered the deployment lifecycle, build automation, and testing workflows. Configured automated test suites, service worker progressive web app caching, deployment pipelines, and release reliability infrastructure.
+                </p>
+                <div class="team-skills">
+                  <span class="skill-tag">CI/CD Lead</span>
+                  <span class="skill-tag">Automated Testing</span>
+                  <span class="skill-tag">PWA & Caching</span>
+                  <span class="skill-tag">DevOps & Release</span>
+                </div>
+              </div>
+
+              <!-- Member 4: Vihaan Gupta -->
+              <div class="team-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="team-card-header">
+                  <div class="team-avatar">
+                    <span>VG</span>
+                  </div>
+                  <div class="team-meta">
+                    <h3 class="team-name">Vihaan Gupta</h3>
+                    <div class="team-role-pill">Asset Gatherer & Asset Builder</div>
+                  </div>
+                </div>
+                <p class="team-bio">
+                  Engineered the comprehensive sign media foundation. Sourced, generated, and curated over 1,000+ sign video demonstrations, alphabet image sequences, and multi-dialect taxonomies (ASL, ISL, BSL, Auslan).
+                </p>
+                <div class="team-skills">
+                  <span class="skill-tag">Asset Architecture</span>
+                  <span class="skill-tag">Dataset Curation</span>
+                  <span class="skill-tag">Multi-Dialect Media</span>
+                  <span class="skill-tag">Sign Taxonomy</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HUMAN + AI COLLABORATION MATRIX -->
+          <div class="landing-section" data-motion="fade-up">
+            <div class="landing-section-header">
+              <span class="section-tag">TRANSPARENCY & SYNERGY</span>
+              <h2 class="section-heading">Human Engineering & AI Collaboration</h2>
+              <p class="section-desc">How human domain expertise in logic, data curation, and ML model training teamed up with AI frontend code generation.</p>
+            </div>
+
+            <div class="collab-matrix-grid" data-motion="stagger">
+              <!-- Team Contributions -->
+              <div class="collab-card team-collab-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="collab-card-header">
+                  <div class="collab-icon-badge team-badge">
+                    <i data-lucide="user-check" style="width:20px;height:20px;"></i>
+                  </div>
+                  <div>
+                    <h3 class="collab-title">Team Human Contributions</h3>
+                    <span class="collab-subtitle">Concept, Data, ML Fine-Tuning & Backend Logic</span>
+                  </div>
+                </div>
+                <div class="collab-list">
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>Ideation & Problem Formulation:</strong>
+                      <p>Identified the critical need for a zero-barrier telepresence bridge between verbal speakers and deaf/mute individuals.</p>
+                    </div>
+                  </div>
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>ML Model Fine-Tuning & Training:</strong>
+                      <p>Fine-tuned pre-trained vision models on custom sign datasets and open-source repositories using OpenCV and TensorFlow for accurate gesture classification.</p>
+                    </div>
+                  </div>
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>Asset Gathering & Data Pipeline:</strong>
+                      <p>Collected, cleaned, and organized thousands of sign videos and alphabet images, creating complete datasets across multiple sign dialects.</p>
+                    </div>
+                  </div>
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>Core Tokenizer & Fallback Algorithm:</strong>
+                      <p>Designed the word-level matching logic with character-by-character fingerspelling fallback for complete sentence generation.</p>
+                    </div>
+                  </div>
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>CI/CD & Architecture Management:</strong>
+                      <p>Structured the repository, continuous integration tests, and release management.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI Contributions -->
+              <div class="collab-card ai-collab-card interactive-tilt-card">
+                <div class="card-spotlight"></div>
+                <div class="collab-card-header">
+                  <div class="collab-icon-badge ai-badge">
+                    <i data-lucide="sparkles" style="width:20px;height:20px;"></i>
+                  </div>
+                  <div>
+                    <h3 class="collab-title">AI Engine Contributions</h3>
+                    <span class="collab-subtitle">UI/UX Implementation & Web Code Architecture</span>
+                  </div>
+                </div>
+                <div class="collab-list">
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>Frontend UI/UX Implementation:</strong>
+                      <p>Crafted the responsive dark monochrome glassmorphism user interface with fluid layout animations and modern typography.</p>
+                    </div>
+                  </div>
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>Client-Side Real-Time Integration:</strong>
+                      <p>Implemented the MediaPipe camera pipeline, canvas overlay rendering, and Web Speech recognition bindings.</p>
+                    </div>
+                  </div>
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>Full-Stack API Scaffolding:</strong>
+                      <p>Generated FastAPI asynchronous endpoints, dictionary search handlers, and neural text-to-speech fallback mechanisms.</p>
+                    </div>
+                  </div>
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>PWA Caching & Optimization:</strong>
+                      <p>Configured Service Worker cache strategies, offline manifest capabilities, and high-DPI asset rendering.</p>
+                    </div>
+                  </div>
+                  <div class="collab-item">
+                    <i data-lucide="check" class="collab-check"></i>
+                    <div>
+                      <strong>Accessibility Enhancements:</strong>
+                      <p>Engineered keyboard navigation, ARIA semantics, live telemetry status displays, and screen-reader accessibility.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INTERACTIVE FAQ & ARCHITECTURE ACCORDION (Framer Motion `layout` morphing) -->
+          <div class="landing-section" data-motion="fade-up">
+            <div class="landing-section-header">
+              <span class="section-tag">ARCHITECTURE DEEP DIVE</span>
+              <h2 class="section-heading">Frequently Asked Questions</h2>
+              <p class="section-desc">How OmniSign achieves low-latency bidirectional translation and 100% private on-device processing.</p>
+            </div>
+
+            <div class="faq-accordion-container" data-motion="stagger">
+              <div class="faq-card interactive-tilt-card">
+                <button class="faq-trigger" aria-expanded="false">
+                  <span class="faq-q">How does the greedy word matching & letter fingerspelling fallback work?</span>
+                  <i data-lucide="chevron-down" class="faq-chevron"></i>
+                </button>
+                <div class="faq-answer">
+                  <p>Our phonetic tokenizer first scans spoken or typed sentences against our catalog of over 120+ animated words. If a word or phrase is not cataloged in our vocabulary, the tokenizer breaks the word down character-by-character into discrete fingerspelled alphabet sign assets (e.g. "HI" &rarr; "H" + "I").</p>
+                </div>
+              </div>
+
+              <div class="faq-card interactive-tilt-card">
+                <button class="faq-trigger" aria-expanded="false">
+                  <span class="faq-q">Is my camera video sent to a remote server for sign recognition?</span>
+                  <i data-lucide="chevron-down" class="faq-chevron"></i>
+                </button>
+                <div class="faq-answer">
+                  <p>No. 100% of the hand tracking, 21-point landmark mesh extraction, and gesture classification runs directly inside your local browser engine. No camera frames or video data are ever uploaded to any server, guaranteeing absolute privacy.</p>
+                </div>
+              </div>
+
+              <div class="faq-card interactive-tilt-card">
+                <button class="faq-trigger" aria-expanded="false">
+                  <span class="faq-q">Which sign language dialects are currently supported?</span>
+                  <i data-lucide="chevron-down" class="faq-chevron"></i>
+                </button>
+                <div class="faq-answer">
+                  <p>OmniSign AI provides multi-dialect taxonomies and video sets for American Sign Language (ASL), Indian Sign Language (ISL), British Sign Language (BSL 2-hand), and Australian Sign Language (Auslan).</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INTERACTIVE CTA BANNER -->
+          <div class="landing-cta-banner" data-motion="fade-up">
+            <div class="cta-glow"></div>
+            <h2 class="cta-heading">Ready to Experience Barrier-Free Communication?</h2>
+            <p class="cta-sub">Launch the real-time telepresence bridge or explore the interactive sign dictionary now.</p>
+            <div class="cta-btn-group">
+              <button class="landing-btn landing-btn-primary" data-jump-tab="bridge">
+                <span class="btn-shimmer"></span>
+                <i data-lucide="zap" style="width:18px;height:18px;"></i>
+                <span>Open Live Bridge</span>
+              </button>
+              <button class="landing-btn landing-btn-secondary" data-jump-tab="dictionary">
+                <i data-lucide="book-open" style="width:18px;height:18px;"></i>
+                <span>Browse Sign Dictionary</span>
+              </button>
+              <button class="landing-btn landing-btn-secondary" data-jump-tab="practice">
+                <i data-lucide="award" style="width:18px;height:18px;"></i>
+                <span>Practice & Quiz</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= TAB: LIVE CONVERSATION BRIDGE ================= -->
+      <section id="tab-bridge" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-bridge">
+        <div class="bridge-grid-layout">
+          
+          <!-- Left Sidebar: Active Session Stream -->
+          <div class="bridge-sidebar">
+            <div class="sidebar-header">
+              <span class="sidebar-title">Active Session</span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <button id="bridge-export-btn" class="mini-icon-action-btn" title="Export Full Meeting Transcript" data-magnetic="true">
+                  <i data-lucide="download" style="width:13px;height:13px;"></i>
+                  <span>Export Log</span>
+                </button>
+                <span id="bridge-msg-count" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">3 msgs</span>
+                <div class="live-badge">
+                  <span class="live-dot"></span>
+                  <span>LIVE</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scrollable Message Feed -->
+            <div id="bridge-chat-feed" class="chat-scroll-container">
+              <!-- Speaker Bubble -->
+              <div class="chat-msg speaker">
+                <div class="msg-header">
+                  <strong>Speaker</strong>
+                  <span>10:02 AM</span>
+                </div>
+                <div class="msg-text">Good morning! What is the weather today?</div>
+                <div class="msg-actions">
+                  <button class="msg-btn play-msg-audio" title="Listen Audio"><i data-lucide="volume-2" style="width:12px;height:12px;"></i> Audio</button>
+                  <button class="msg-btn replay-msg-sign" title="Show Signs"><i data-lucide="play-circle" style="width:12px;height:12px;"></i> Sign</button>
+                </div>
+              </div>
+
+              <!-- Deaf Signer Bubble -->
+              <div class="chat-msg signer">
+                <div class="msg-header">
+                  <strong>Signer</strong>
+                  <span>10:03 AM</span>
+                </div>
+                <div class="msg-text">Today is sunny with clear skies.</div>
+                <div class="msg-actions">
+                  <button class="msg-btn play-msg-audio" title="Listen Audio"><i data-lucide="volume-2" style="width:12px;height:12px;"></i> Audio</button>
+                  <button class="msg-btn replay-msg-sign" title="Show Signs"><i data-lucide="play-circle" style="width:12px;height:12px;"></i> Sign</button>
+                </div>
+              </div>
+
+              <!-- Speaker Bubble -->
+              <div class="chat-msg speaker">
+                <div class="msg-header">
+                  <strong>Speaker</strong>
+                  <span>10:03 AM</span>
+                </div>
+                <div class="msg-text">Great! We have time for everyone this afternoon.</div>
+                <div class="msg-actions">
+                  <button class="msg-btn play-msg-audio" title="Listen Audio"><i data-lucide="volume-2" style="width:12px;height:12px;"></i> Audio</button>
+                  <button class="msg-btn replay-msg-sign" title="Show Signs"><i data-lucide="play-circle" style="width:12px;height:12px;"></i> Sign</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Chat Input Bar -->
+            <div class="chat-input-bar">
+              <div class="input-pill-wrapper">
+                <input type="text" id="bridge-speaker-input" class="chat-text-input" placeholder="Type message to sign or speak..." />
+                <button id="bridge-speaker-send-btn" class="chat-send-btn" title="Send message">
+                  <i data-lucide="send" style="width:14px;height:14px;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Player Viewport & HUD Stage -->
+          <div class="bridge-main-stage">
+            
+            <!-- Top Half: Video & HUD Overlay & Sign Visualizer Split -->
+            <div class="bridge-viewport-split">
+              <!-- Webcam feed -->
+              <div class="stage-video-card">
+                <video id="bridge-video" class="stage-video-feed" playsinline muted autoplay></video>
+                <canvas id="bridge-canvas" class="stage-canvas-overlay"></canvas>
+                
+                <!-- Camera prompt placeholder if inactive -->
+                <div id="bridge-cam-prompt" class="camera-standby-cover">
+                  <div class="standby-icon-shield">
+                    <i data-lucide="video" style="width:24px;height:24px;"></i>
+                  </div>
+                  <h3 class="standby-title">Camera Feed Standby</h3>
+                  <p class="standby-desc">Start your camera for real-time sign language tracking.</p>
+                  <button id="bridge-start-cam-btn" class="cta-button primary-cta mini-cta">
+                    <i data-lucide="camera" style="width:14px;height:14px;"></i> Start Camera
+                  </button>
+                </div>
+
+                <!-- Top Left Stats Overlay -->
+                <div class="hud-top-left">
+                  <div class="hud-pill">
+                    <i data-lucide="activity" style="width:12px;height:12px;"></i>
+                    <span id="bridge-fps-pill">VISION READY</span>
+                  </div>
+                  <div class="hud-pill" id="bridge-nms-badge">
+                    <i data-lucide="smile" style="width:12px;height:12px;"></i>
+                    <span id="bridge-nms-pill">NMS: NEUTRAL</span>
+                  </div>
+                  <div class="hud-pill" id="bridge-motion-badge">
+                    <i data-lucide="wind" style="width:12px;height:12px;"></i>
+                    <span id="bridge-motion-pill">FLOW: STATIC</span>
+                  </div>
+                </div>
+
+                <!-- Right Confidence Badge -->
+                <div class="hud-confidence-badge">
+                  <span class="confidence-sign" id="bridge-signer-char">--</span>
+                  <div class="confidence-meter">
+                    <div class="confidence-meter-fill"></div>
+                  </div>
+                  <span class="confidence-pct">READY</span>
+                </div>
+
+                <!-- Live Subtitle Overlay HUD (Karaoke CC) -->
+                <div class="live-subtitle-overlay" id="bridge-subtitle-overlay">
+                  <span class="subtitle-badge">CC LIVE</span>
+                  <span class="subtitle-content" id="bridge-subtitle-text">Captions will appear here live...</span>
+                </div>
+
+                <!-- Floating Bottom Controls -->
+                <div class="hud-floating-dock">
+                  <button id="bridge-mic-btn" class="dock-btn" title="Click to Speak">
+                    <i data-lucide="mic" style="width:16px;height:16px;"></i>
+                  </button>
+                  <button id="bridge-speak-now-btn" class="dock-btn" title="Synthesize Voice">
+                    <i data-lucide="volume-2" style="width:16px;height:16px;"></i>
+                  </button>
+                  <button id="bridge-clear-history-btn" class="dock-btn" title="Clear Chat History">
+                    <i data-lucide="rotate-ccw" style="width:16px;height:16px;"></i>
+                  </button>
+                  <button id="bridge-export-btn" class="dock-btn" title="Export Transcript">
+                    <i data-lucide="download" style="width:16px;height:16px;"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Sign Playback Box -->
+              <div class="stage-sign-playback-card">
+                <div class="sign-playback-header">
+                  <span class="sidebar-title">Sign View</span>
+                  <span id="bridge-sign-caption" class="engine-tag">READY</span>
+                </div>
+                <div class="sign-playback-viewport">
+                  <img id="bridge-sign-image" src="/assets/words/today.webp" alt="Sign demonstration" class="sign-display-media">
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Half: Sign Translation Timeline -->
+            <div class="stage-timeline-card">
+              <div class="timeline-top-bar">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                  <h3 class="timeline-title">Translation Sequence Timeline</h3>
+                  <span id="bridge-timeline-progress" class="engine-tag" style="font-size:10px;padding:2px 8px;">0 / 0 Signs</span>
+                  <div class="slide-nav-group">
+                    <button id="bridge-prev-btn" class="slider-nav-btn" title="Previous Sign (←)">
+                      <i data-lucide="skip-back" style="width:13px;height:13px;"></i>
+                    </button>
+                    <button id="bridge-play-btn" class="slider-nav-btn" title="Play/Pause Sequence" style="background:var(--accent-blue, #6366f1);color:#fff;">
+                      <i data-lucide="play" style="width:13px;height:13px;"></i>
+                    </button>
+                    <button id="bridge-next-btn" class="slider-nav-btn" title="Next Sign (→)">
+                      <i data-lucide="skip-forward" style="width:13px;height:13px;"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="timeline-speed-group">
+                  <button class="speed-chip" data-speed="0.5">0.5x</button>
+                  <button class="speed-chip active" data-speed="1.0">1x</button>
+                  <button class="speed-chip" data-speed="1.5">1.5x</button>
+                  <button class="speed-chip" data-speed="2.0">2x</button>
+                </div>
+              </div>
+
+              <!-- Timeline Tokens Row -->
+              <div class="timeline-token-row" id="bridge-tokens-row">
+                <div class="empty-timeline-hint">Loading translation sequence...</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB: VOICE TO SIGN (V2S) ================= -->
+      <section id="tab-v2s" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-v2s">
+        <div class="workspace-grid v2s-layout">
+          
+          <!-- Left Column: Audio Capture & NLP Tokenizer -->
+          <div class="surface-card studio-card input-pane">
+            <div class="card-header-bar">
+              <div class="pane-headline">
+                <div class="pane-icon-badge">
+                  <i data-lucide="mic-vocal"></i>
+                </div>
+                <div>
+                  <h2 class="pane-title">Acoustic & Text Input</h2>
+                  <p class="pane-desc">Speak naturally or type sentences for animated ASL synthesis</p>
+                </div>
+              </div>
+              <span class="engine-tag">Understands natural speech</span>
+            </div>
+
+            <!-- Kinetic Microphone Section -->
+            <div class="mic-stage">
+              <button id="v2s-mic-btn" class="mic-orb-button" title="Click to activate voice recording">
+                <i data-lucide="mic" style="width:28px;height:28px;"></i>
+              </button>
+              
+              <div class="mic-telemetry-zone">
+                <div class="mic-status-headline" id="v2s-mic-label">Click microphone to speak</div>
+                <div id="v2s-audio-wave" class="reactive-waveform">
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                </div>
+
+                <!-- Voice Activity Detection (VAD) Decibel Bar -->
+                <div class="vad-meter-container">
+                  <div class="vad-meter-header">
+                    <span class="vad-label"><i data-lucide="activity" style="width:11px;height:11px;"></i> VAD Audio Energy</span>
+                    <span class="vad-status-badge" id="v2s-vad-status">SILENT</span>
+                  </div>
+                  <div class="vad-meter-track">
+                    <div class="vad-meter-fill" id="v2s-vad-fill"></div>
+                    <div class="vad-threshold-marker" style="left: 30%;" title="VAD Speech Threshold (30%)"></div>
+                  </div>
+                </div>
+              </div>
+
+              <button class="vad-toggle-btn active" id="v2s-vad-toggle" title="Auto-commit on 1s silence">
+                <i data-lucide="zap" style="width:12px;height:12px;"></i>
+                <span>Auto-VAD: ON</span>
+              </button>
+            </div>
+
+            <!-- Text Prompt Studio -->
+            <div class="field-container">
+              <div class="field-header">
+                <label for="v2s-text-input" class="field-label">Phrase or Conversation Prompt</label>
+                <span class="field-meta">Lemmatization & Multi-word supported</span>
+              </div>
+              <div class="text-editor-box">
+                <textarea id="v2s-text-input" placeholder="e.g. Good morning everyone, how are you feeling today?" rows="3"></textarea>
+                <button id="v2s-clear-btn" class="editor-clear-btn" title="Clear text prompt">
+                  <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Fast Prompt Chips -->
+            <div class="prompt-chips-section">
+              <span class="chips-eyebrow">Quick Presets:</span>
+              <div class="chips-flex-wrap">
+                <button class="preset-chip" data-phrase="Good morning everyone"><i data-lucide="sun" style="width:14px;height:14px;"></i> Good morning</button>
+                <button class="preset-chip" data-phrase="Today is cold and windy weather"><i data-lucide="cloud-rain" style="width:14px;height:14px;"></i> Cold & windy</button>
+                <button class="preset-chip" data-phrase="See you next week Friday"><i data-lucide="calendar" style="width:14px;height:14px;"></i> Next week</button>
+                <button class="preset-chip" data-phrase="Heavy rain and lightning sunset"><i data-lucide="zap" style="width:14px;height:14px;"></i> Heavy rain</button>
+              </div>
+            </div>
+
+            <!-- Primary Actions -->
+            <div class="action-grid">
+              <button id="v2s-translate-btn" class="cta-button primary-cta">
+                <i data-lucide="sparkles" style="width:18px;height:18px;"></i>
+                <span>Synthesize Signs</span>
+              </button>
+              <button id="v2s-speak-text-btn" class="cta-button secondary-cta" title="Listen to acoustic voice">
+                <i data-lucide="volume-2" style="width:18px;height:18px;"></i>
+                <span>Voice Out</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Sign Visualizer Stage -->
+          <div class="surface-card studio-card visualizer-pane">
+            <div class="card-header-bar">
+              <div class="pane-headline">
+                <div class="pane-icon-badge">
+                  <i data-lucide="play-circle"></i>
+                </div>
+                <div>
+                  <h2 class="pane-title">Sign Visualizer Stage</h2>
+                  <p class="pane-desc">High-Definition Animated Sign Playback</p>
+                </div>
+              </div>
+              <span id="v2s-progress-badge" class="engine-tag">0 / 0 Signs</span>
+            </div>
+
+            <!-- The Cinema Stage Frame -->
+            <div class="cinema-stage-frame">
+              <div class="stage-viewport">
+                <img id="v2s-sign-image" src="/assets/words/today.webp" alt="Sign Media" class="cinema-media">
+                
+                <!-- Fallback Empty State -->
+                <div id="v2s-sign-placeholder" class="cinema-empty-placeholder hidden">
+                  <i data-lucide="play" style="width:32px;height:32px;opacity:0.4;"></i>
+                  <h3>No Active Sequence</h3>
+                  <p>Type text or use voice input to synthesize signs.</p>
+                </div>
+
+                <!-- Floating Holographic HUD Badge -->
+                <div class="stage-hologram-hud">
+                  <div class="hologram-pill">
+                    <span class="token-mode" id="v2s-current-type">WORD</span>
+                    <span class="token-val" id="v2s-current-word">TODAY</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Media Transport Controls -->
+              <div class="playback-transport-bar">
+                <div class="transport-nav-group">
+                  <button id="v2s-prev-btn" class="transport-btn" title="Previous Sign (←)">
+                    <i data-lucide="skip-back" style="width:16px;height:16px;"></i>
+                  </button>
+                  <button id="v2s-play-btn" class="transport-btn play-master" title="Play/Pause">
+                    <i data-lucide="play" style="width:18px;height:18px;"></i>
+                  </button>
+                  <button id="v2s-next-btn" class="transport-btn" title="Next Sign (→)">
+                    <i data-lucide="skip-forward" style="width:16px;height:16px;"></i>
+                  </button>
+                  <button id="v2s-loop-btn" class="transport-btn" title="Toggle Looping">
+                    <i data-lucide="repeat" style="width:16px;height:16px;"></i>
+                  </button>
+                </div>
+
+                <!-- Cadence / Speed -->
+                <div class="timeline-speed-group">
+                  <button class="speed-chip" data-speed="0.5">0.5×</button>
+                  <button class="speed-chip active" data-speed="1.0">1.0×</button>
+                  <button class="speed-chip" data-speed="1.5">1.5×</button>
+                </div>
+              </div>
+
+              <!-- Scrubbing Timeline Bar -->
+              <div class="playback-scrubber-track">
+                <div id="v2s-progress-fill" class="scrubber-progress-glow" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Sign Sequence Breakdown Flow -->
+            <div class="sequence-inspection-dock">
+              <div class="field-header" style="margin-bottom:8px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="field-label">Sequence Breakdown</span>
+                  <div class="slide-nav-group">
+                    <button id="v2s-slide-left" class="slider-nav-btn" title="Slide Left">
+                      <i data-lucide="chevron-left" style="width:14px;height:14px;"></i>
+                    </button>
+                    <button id="v2s-slide-right" class="slider-nav-btn" title="Slide Right">
+                      <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+                    </button>
+                  </div>
+                </div>
+                <span id="v2s-stats-text" class="field-meta">0 words matched, 0 fingerspelled</span>
+              </div>
+              <div id="v2s-sequence-timeline" class="timeline-token-row" style="min-height: 70px;">
+                <div class="empty-timeline-hint" style="color:var(--color-text-muted);font-size:12px;">
+                  Translation sequence tokens will appear here after synthesis.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB: SIGN TO VOICE (S2V) ================= -->
+      <section id="tab-s2v" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-s2v">
+        <div class="workspace-grid s2v-layout">
+          
+          <!-- Left Column: Camera Vision Viewport -->
+          <div class="surface-card studio-card vision-pane">
+            <div class="card-header-bar">
+              <div class="pane-headline">
+                <div class="pane-icon-badge">
+                  <i data-lucide="scan"></i>
+                </div>
+                <div>
+                  <h2 class="pane-title">Computer Vision Feed</h2>
+                  <p class="pane-desc">21-Point hand landmark mesh tracking & gesture recognition</p>
+                </div>
+              </div>
+              <button id="s2v-cam-toggle" class="cta-button mini-cta secondary-cta">
+                <i data-lucide="video" style="width:14px;height:14px;"></i>
+                <span>Start Camera</span>
+              </button>
+            </div>
+
+            <!-- The Camera / Vision Viewport -->
+            <div class="camera-stage-box">
+              <video id="s2v-video" playsinline muted class="raw-camera-stream"></video>
+              <canvas id="s2v-canvas" class="landmark-overlay-canvas"></canvas>
+              
+              <!-- Camera Inactive Standby -->
+              <div id="s2v-cam-placeholder" class="camera-standby-cover">
+                <div class="standby-icon-shield">
+                  <i data-lucide="video-off" style="width:28px;height:28px;"></i>
+                </div>
+                <h3 class="standby-title">Vision Sensor Standby</h3>
+                <p id="s2v-cam-status-msg" class="standby-desc">Activate your camera for live gesture recognition, or test with the Virtual Demo Pad.</p>
+                
+                <div class="standby-actions-wrap">
+                  <button id="s2v-start-cam-btn" class="cta-button primary-cta mini-cta">
+                    <i data-lucide="camera" style="width:16px;height:16px;"></i> Connect Camera
+                  </button>
+                  <button id="s2v-virtual-cam-btn" class="cta-button secondary-cta mini-cta">
+                    <i data-lucide="gamepad-2" style="width:16px;height:16px;"></i> Virtual Simulator
+                  </button>
+                </div>
+
+                <!-- Error Alert Box -->
+                <div id="s2v-cam-error-box" class="camera-alert-callout hidden" style="background:rgba(239,68,68,0.1);padding:10px;border-radius:8px;border:1px solid rgba(239,68,68,0.3);margin-top:10px;">
+                  <strong id="s2v-error-title" style="color:var(--color-danger);font-size:12px;">Camera Permission Needed</strong>
+                  <p id="s2v-error-desc" style="font-size:11px;color:var(--text-muted);">Please allow camera access in your browser to get started.</p>
+                </div>
+              </div>
+
+              <!-- Virtual Sign Simulation Pad -->
+              <div id="s2v-virtual-pad" class="virtual-simulator-drawer hidden">
+                <div class="sim-drawer-header">
+                  <span>Virtual Gesture Simulator</span>
+                  <button id="s2v-close-vpad" class="sim-close-pill">✕ Close</button>
+                </div>
+                <div class="sim-button-grid">
+                  <button class="vpad-btn" data-sign="HELLO">👋 Hello</button>
+                  <button class="vpad-btn" data-sign="YES">👍 Yes</button>
+                  <button class="vpad-btn" data-sign="NO">👎 No</button>
+                  <button class="vpad-btn" data-sign="V">✌️ Peace (V)</button>
+                  <button class="vpad-btn" data-sign="OK">👌 OK</button>
+                  <button class="vpad-btn" data-sign="I LOVE YOU">🤟 Love</button>
+                  <button class="vpad-btn" data-sign="A">🔤 A</button>
+                  <button class="vpad-btn" data-sign="B">🔤 B</button>
+                  <button class="vpad-btn" data-sign="C">🔤 C</button>
+                  <button class="vpad-btn" data-sign="D">🔤 D</button>
+                  <button class="vpad-btn" data-sign="L">🔤 L</button>
+                  <button class="vpad-btn" data-sign="W">🔤 W</button>
+                  <button class="vpad-btn" data-sign="Y">🔤 Y</button>
+                </div>
+              </div>
+
+              <!-- HUD Overlay in S2V -->
+              <div id="s2v-hud" class="hud-confidence-badge hidden" style="top:16px;right:16px;">
+                <span class="confidence-sign" id="s2v-hud-sign">--</span>
+                <div class="confidence-meter">
+                  <div class="confidence-meter-fill"></div>
+                </div>
+                <span class="confidence-pct" id="s2v-hud-conf">0%</span>
+              </div>
+
+              <!-- Top Left NMS & Motion Stats in S2V -->
+              <div class="hud-top-left" style="top:16px;left:16px;">
+                <div class="hud-pill" id="s2v-nms-badge">
+                  <i data-lucide="smile" style="width:12px;height:12px;"></i>
+                  <span id="s2v-nms-pill">NMS: NEUTRAL</span>
+                </div>
+                <div class="hud-pill" id="s2v-motion-badge">
+                  <i data-lucide="wind" style="width:12px;height:12px;"></i>
+                  <span id="s2v-motion-pill">FLOW: STATIC</span>
+                </div>
+              </div>
+
+              <!-- Live Subtitle Overlay HUD (Karaoke CC) in S2V -->
+              <div class="live-subtitle-overlay" id="s2v-subtitle-overlay">
+                <span class="subtitle-badge">CC LIVE</span>
+                <span class="subtitle-content" id="s2v-subtitle-text">Captions will appear here live...</span>
+              </div>
+            </div>
+
+            <!-- Gesture Glossary Tray -->
+            <div class="prompt-chips-section" style="margin-top:1rem;">
+              <span class="chips-eyebrow">Supported Sign Repertoire:</span>
+              <div class="chips-flex-wrap">
+                <span class="preset-chip">👋 Hello</span>
+                <span class="preset-chip">👍 Yes</span>
+                <span class="preset-chip">👎 No</span>
+                <span class="preset-chip">✌️ Peace / V</span>
+                <span class="preset-chip">👌 OK</span>
+                <span class="preset-chip">🤟 Love</span>
+                <span class="preset-chip">🔤 Alphabet A-Z</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Sentence Builder & TTS -->
+          <div class="surface-card studio-card speech-pane">
+            <div class="card-header-bar">
+              <div class="pane-headline">
+                <div class="pane-icon-badge">
+                  <i data-lucide="volume-2"></i>
+                </div>
+                <div>
+                  <h2 class="pane-title">Sentence Builder & TTS</h2>
+                  <p class="pane-desc">Accumulate recognized signs into spoken voice output</p>
+                </div>
+              </div>
+              <span class="engine-tag" style="color:var(--rose-light);">Speaks for you</span>
+            </div>
+
+            <!-- Recognized Sign Hero Box -->
+            <div class="recognized-hero-deck">
+              <div class="hero-char-cell">
+                <span class="hero-eyebrow">Real-Time Gesture:</span>
+                <div class="hero-character-box">
+                  <span id="s2v-current-char" class="hero-char-display">--</span>
+                  <div class="char-timer-track">
+                    <span id="s2v-hold-progress" class="char-timer-bar"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Top-3 Neural Probability HUD -->
+              <div class="top3-probability-dock" id="s2v-top3-dock">
+                <span class="top3-eyebrow">Top Probabilistic Matches:</span>
+                <div class="top3-bars-list">
+                  <div class="top3-row">
+                    <span class="top3-name" id="s2v-cand-1-name">HELLO</span>
+                    <div class="top3-bar-bg"><div class="top3-bar-fill" id="s2v-cand-1-bar" style="width:96%;"></div></div>
+                    <span class="top3-pct" id="s2v-cand-1-pct">96%</span>
+                  </div>
+                  <div class="top3-row">
+                    <span class="top3-name" id="s2v-cand-2-name">OPEN PALM</span>
+                    <div class="top3-bar-bg"><div class="top3-bar-fill" id="s2v-cand-2-bar" style="width:24%;"></div></div>
+                    <span class="top3-pct" id="s2v-cand-2-pct">24%</span>
+                  </div>
+                  <div class="top3-row">
+                    <span class="top3-name" id="s2v-cand-3-name">WAVE</span>
+                    <div class="top3-bar-bg"><div class="top3-bar-fill" id="s2v-cand-3-bar" style="width:8%;"></div></div>
+                    <span class="top3-pct" id="s2v-cand-3-pct">8%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hold & Auto-append toggle -->
+              <div class="append-policy-toggle">
+                <label class="tactile-switch">
+                  <input type="checkbox" id="s2v-auto-append" checked>
+                  <span class="switch-groove"></span>
+                </label>
+                <div class="policy-label">
+                  <strong>Hold to Append</strong>
+                  <p>1.2s steady hold</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Landmark Theme Selector -->
+            <div class="mesh-theme-dock">
+              <span class="chips-eyebrow">Landmark Mesh Style:</span>
+              <div class="mesh-theme-pills">
+                <button class="mesh-pill active" data-theme="emerald">Laser Emerald</button>
+                <button class="mesh-pill" data-theme="cyan">Cyber Cyan</button>
+                <button class="mesh-pill" data-theme="violet">Neon Violet</button>
+                <button class="mesh-pill" data-theme="mono">Mono White</button>
+              </div>
+            </div>
+
+            <!-- Sentence Construction Buffer -->
+            <div class="sentence-workspace">
+              <div class="workspace-controls-header">
+                <label for="s2v-sentence-buffer" class="field-label">Accumulated Voice Transcript</label>
+                <div class="buffer-toolbar">
+                  <button id="s2v-add-space-btn" class="utility-pill" title="Insert Space"><i data-lucide="space" style="width:12px;height:12px;"></i> Space</button>
+                  <button id="s2v-backspace-btn" class="utility-pill" title="Delete last character"><i data-lucide="delete" style="width:12px;height:12px;"></i> Del</button>
+                  <button id="s2v-clear-buffer-btn" class="utility-pill danger-pill" title="Clear"><i data-lucide="trash-2" style="width:12px;height:12px;"></i> Clear</button>
+                </div>
+              </div>
+              <textarea id="s2v-sentence-buffer" placeholder="Signs, letters, and words accumulated in real time will appear here..." rows="4"></textarea>
+            </div>
+
+            <!-- Predictive Word Chips -->
+            <div class="predictive-autocomplete-dock">
+              <div class="ac-header">
+                <i data-lucide="wand-2" style="width:14px;height:14px;"></i>
+                <span>Predictive Autocomplete:</span>
+              </div>
+              <div id="s2v-suggestions" class="ac-chips-shelf">
+                <button class="sugg-chip">hello</button>
+                <button class="sugg-chip">weather</button>
+                <button class="sugg-chip">tomorrow</button>
+              </div>
+            </div>
+
+            <!-- Speech Synthesis Voice Settings -->
+            <div class="tts-config-bar">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <label for="s2v-voice-select" style="font-size:12px;font-family:var(--font-mono);"><i data-lucide="user-voice" style="width:14px;height:14px;display:inline;"></i> Voice:</label>
+                <select id="s2v-voice-select" class="custom-select"></select>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <label class="tactile-switch" style="transform:scale(0.8);">
+                  <input type="checkbox" id="s2v-auto-speak" checked>
+                  <span class="switch-groove"></span>
+                </label>
+                <span style="font-size:12px;font-family:var(--font-mono);">Auto Speak</span>
+              </div>
+            </div>
+
+            <!-- Speech Output Action Triggers -->
+            <div class="action-grid">
+              <button id="s2v-speak-sentence-btn" class="cta-button primary-cta">
+                <i data-lucide="volume-2" style="width:18px;height:18px;"></i>
+                <span>Speak Sentence</span>
+              </button>
+              <button id="s2v-send-to-bridge-btn" class="cta-button secondary-cta" title="Forward into Live Bridge">
+                <i data-lucide="send" style="width:18px;height:18px;"></i>
+                <span>Send to Bridge</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB: DICTIONARY EXPLORER ================= -->
+      <section id="tab-dictionary" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-dictionary">
+        <div class="surface-card studio-card">
+          <div class="card-header-bar">
+            <div class="pane-headline">
+              <div class="pane-icon-badge">
+                <i data-lucide="book-open"></i>
+              </div>
+              <div>
+                <h2 class="pane-title">Sign Vocabulary Catalog</h2>
+                <p class="pane-desc">Explore 120+ animated words and 26 ASL fingerspelling alphabets</p>
+              </div>
+            </div>
+            <span id="dict-count-badge" class="engine-tag" style="color:var(--color-primary);">146 Total Signs</span>
+          </div>
+
+          <!-- Search & Filter Bar -->
+          <div class="catalog-filters-bar">
+            <div class="search-input-wrap">
+              <i data-lucide="search" class="search-glyph" style="width:18px;height:18px;"></i>
+              <input type="text" id="dict-search-input" placeholder="Search signs by keyword, letter, or category..." class="search-text-field">
+            </div>
+            
+            <div id="dict-category-pills" class="category-pill-strip">
+              <button class="cat-pill pill active" data-cat="all">All Signs</button>
+              <button class="cat-pill pill" data-cat="alphabet">🔤 Alphabet (A-Z)</button>
+              <button class="cat-pill pill" data-cat="weather">🌤️ Weather</button>
+              <button class="cat-pill pill" data-cat="calendar & time">⏰ Calendar & Time</button>
+              <button class="cat-pill pill" data-cat="pronouns & people">👥 Pronouns & People</button>
+            </div>
+          </div>
+
+          <!-- Catalog Grid -->
+          <div id="dict-grid-container" class="dictionary-catalog-grid">
+            <!-- Dynamically populated via app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB: PRACTICE STUDIO ================= -->
+      <section id="tab-practice" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-practice">
+        <div class="workspace-grid practice-layout">
+          
+          <!-- Left Column: Challenge Target Card -->
+          <div class="surface-card studio-card">
+            <div class="card-header-bar">
+              <div class="pane-headline">
+                <div class="pane-icon-badge">
+                  <i data-lucide="award"></i>
+                </div>
+                <div>
+                  <h2 class="pane-title">Sign Challenge</h2>
+                  <p class="pane-desc">Mirror the sign target in front of your camera</p>
+                </div>
+              </div>
+              <div class="practice-metrics-pill">
+                <span>Streak: <strong id="practice-streak" style="color:var(--color-warning);">0</strong> 🔥</span>
+                <span>Score: <strong id="practice-score" style="color:var(--color-primary);">0</strong></span>
+              </div>
+            </div>
+
+            <!-- Challenge Target Details -->
+            <div class="challenge-target-deck">
+              <div class="challenge-meta">
+                <span class="challenge-eyebrow">Target Sign:</span>
+                <h3 id="practice-target-word" class="challenge-name">Letter "A"</h3>
+                <p id="practice-target-hint" class="challenge-instruction">Make a closed fist with thumb rested beside index finger</p>
+              </div>
+              <div class="target-reference-viewport">
+                <img id="practice-target-img" src="/assets/alphabet/a_small.gif" alt="Target Sign" class="target-reference-gif">
+              </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="action-grid">
+              <button id="practice-start-btn" class="cta-button primary-cta">
+                <i data-lucide="video" style="width:18px;height:18px;"></i>
+                <span>Start Practice</span>
+              </button>
+              <button id="practice-next-btn" class="cta-button secondary-cta">
+                <i data-lucide="skip-forward" style="width:18px;height:18px;"></i>
+                <span>Next Challenge</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Practice Camera Viewport -->
+          <div class="surface-card studio-card">
+            <div class="card-header-bar">
+              <div class="pane-headline">
+                <div class="pane-icon-badge">
+                  <i data-lucide="scan"></i>
+                </div>
+                <div>
+                  <h2 class="pane-title">Live Vision Evaluation</h2>
+                  <p class="pane-desc">Real-time geometric landmark classifier</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="practice-camera-viewport">
+              <video id="practice-video" playsinline muted class="practice-video-stream"></video>
+              <canvas id="practice-canvas" class="practice-canvas-layer"></canvas>
+              
+              <!-- Joint Error Heatmap Overlay Canvas -->
+              <canvas id="practice-heatmap-canvas" class="practice-heatmap-layer"></canvas>
+
+              <div id="practice-feedback" class="practice-feedback-banner">
+                <i data-lucide="camera" style="width:16px;height:16px;"></i>
+                <span>Position your hand in front of camera to begin</span>
+              </div>
+            </div>
+
+            <!-- Gamified Quest Progress Bar -->
+            <div class="quest-progress-panel">
+              <div class="quest-header">
+                <span class="quest-title"><i data-lucide="flame" style="width:13px;height:13px;"></i> Daily Quest Progress</span>
+                <span class="quest-xp-badge" id="practice-xp-badge">0 XP</span>
+              </div>
+              <div class="quest-track">
+                <div class="quest-fill" id="practice-quest-fill" style="width: 0%;"></div>
+              </div>
+              <div class="quest-milestones">
+                <span class="quest-milestone" data-xp="100">🥉 100 XP</span>
+                <span class="quest-milestone" data-xp="300">🥈 300 XP</span>
+                <span class="quest-milestone" data-xp="500">🥇 500 XP</span>
+                <span class="quest-milestone" data-xp="1000">🏆 1000 XP</span>
+              </div>
+
+              <!-- Heatmap Legend & Real-Time Accuracy Meter -->
+              <div class="accuracy-eval-dock">
+                <div class="accuracy-circle-wrap">
+                  <svg class="accuracy-svg" viewBox="0 0 100 100">
+                    <circle class="accuracy-bg-circle" cx="50" cy="50" r="40"></circle>
+                    <circle class="accuracy-fill-circle" id="practice-accuracy-circle" cx="50" cy="50" r="40"></circle>
+                  </svg>
+                  <div class="accuracy-center-text">
+                    <span class="accuracy-pct-val" id="practice-accuracy-pct">0%</span>
+                    <span class="accuracy-label">ACCURACY</span>
+                  </div>
+                </div>
+
+                <div class="heatmap-legend">
+                  <span class="heatmap-legend-label">Joint Accuracy:</span>
+                  <span class="heatmap-swatch perfect"></span><span>Perfect</span>
+                  <span class="heatmap-swatch close"></span><span>Close</span>
+                  <span class="heatmap-swatch off"></span><span>Off</span>
+                </div>
+              </div>
+
+              <!-- Achievement Badges Dock -->
+              <div class="achievements-dock">
+                <span class="quest-title"><i data-lucide="award" style="width:13px;height:13px;"></i> Unlockable Achievements</span>
+                <div class="badges-grid">
+                  <div class="badge-card unlocked" id="badge-first-sign" title="Formed your first valid sign!">
+                    <span class="badge-icon">🎯</span>
+                    <span class="badge-name">First Sign</span>
+                  </div>
+                  <div class="badge-card" id="badge-streak-5" title="Achieve a 5-streak in Practice!">
+                    <span class="badge-icon">🔥</span>
+                    <span class="badge-name">5x Streak</span>
+                  </div>
+                  <div class="badge-card" id="badge-alphabet-hero" title="Complete 10 alphabet signs!">
+                    <span class="badge-icon">🔤</span>
+                    <span class="badge-name">Alphabet Pro</span>
+                  </div>
+                  <div class="badge-card" id="badge-master-form" title="Score 95%+ accuracy on a gesture!">
+                    <span class="badge-icon">👑</span>
+                    <span class="badge-name">Master Form</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span style="color:var(--color-primary);font-weight:700;">OmniSign AI</span>
+          <span>&bull;</span>
+          <span>Two-Way Accessible Sign Language & Speech Communication System</span>
+        </div>
+        <div class="footer-stats-strip">
+          <span><strong class="stat-num">120</strong> Signs</span>
+          <span>&bull;</span>
+          <span><strong class="stat-num">26</strong> Alphabets</span>
+          <span>&bull;</span>
+          <span><strong class="stat-num">21</strong> Hand Landmarks</span>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Main Application Script -->
+  <script src="/static/app.js"></script>
+
+  <!-- Service Worker Registration for Offline PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js', { scope: '/' })
+          .then(reg => console.log('[OmniSign PWA] SW registered:', reg.scope))
+          .catch(err => console.warn('[OmniSign PWA] SW registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>

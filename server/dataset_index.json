@@ -1,0 +1,1242 @@
+{
+  "words": [
+    {
+      "word": "afternoon",
+      "filename": "afternoon.webp",
+      "path": "/assets/words/afternoon.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "afternoon"
+      ]
+    },
+    {
+      "word": "all",
+      "filename": "all.webp",
+      "path": "/assets/words/all.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "all"
+      ]
+    },
+    {
+      "word": "annually",
+      "filename": "annually.webp",
+      "path": "/assets/words/annually.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "annually"
+      ]
+    },
+    {
+      "word": "any",
+      "filename": "any.webp",
+      "path": "/assets/words/any.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "any"
+      ]
+    },
+    {
+      "word": "anyone",
+      "filename": "anyone.webp",
+      "path": "/assets/words/anyone.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "anyone"
+      ]
+    },
+    {
+      "word": "anything",
+      "filename": "anything.webp",
+      "path": "/assets/words/anything.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "anything"
+      ]
+    },
+    {
+      "word": "april",
+      "filename": "april.webp",
+      "path": "/assets/words/april.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "april"
+      ]
+    },
+    {
+      "word": "black ice",
+      "filename": "black ice.webp",
+      "path": "/assets/words/black ice.webp",
+      "category": "weather",
+      "tokens": [
+        "black",
+        "ice"
+      ]
+    },
+    {
+      "word": "blizzard",
+      "filename": "blizzard.webp",
+      "path": "/assets/words/blizzard.webp",
+      "category": "weather",
+      "tokens": [
+        "blizzard"
+      ]
+    },
+    {
+      "word": "breezy",
+      "filename": "breezy.webp",
+      "path": "/assets/words/breezy.webp",
+      "category": "weather",
+      "tokens": [
+        "breezy"
+      ]
+    },
+    {
+      "word": "brisk",
+      "filename": "brisk.webp",
+      "path": "/assets/words/brisk.webp",
+      "category": "weather",
+      "tokens": [
+        "brisk"
+      ]
+    },
+    {
+      "word": "clear skies",
+      "filename": "clear skies.webp",
+      "path": "/assets/words/clear skies.webp",
+      "category": "weather",
+      "tokens": [
+        "clear",
+        "skies"
+      ]
+    },
+    {
+      "word": "cloudy",
+      "filename": "cloudy.webp",
+      "path": "/assets/words/cloudy.webp",
+      "category": "weather",
+      "tokens": [
+        "cloudy"
+      ]
+    },
+    {
+      "word": "cold",
+      "filename": "cold.webp",
+      "path": "/assets/words/cold.webp",
+      "category": "weather",
+      "tokens": [
+        "cold"
+      ]
+    },
+    {
+      "word": "cool",
+      "filename": "cool.webp",
+      "path": "/assets/words/cool.webp",
+      "category": "weather",
+      "tokens": [
+        "cool"
+      ]
+    },
+    {
+      "word": "dawn",
+      "filename": "dawn.webp",
+      "path": "/assets/words/dawn.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "dawn"
+      ]
+    },
+    {
+      "word": "day",
+      "filename": "day.webp",
+      "path": "/assets/words/day.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "day"
+      ]
+    },
+    {
+      "word": "december",
+      "filename": "december.webp",
+      "path": "/assets/words/december.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "december"
+      ]
+    },
+    {
+      "word": "degrees",
+      "filename": "degrees.webp",
+      "path": "/assets/words/degrees.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "degrees"
+      ]
+    },
+    {
+      "word": "dry",
+      "filename": "dry.webp",
+      "path": "/assets/words/dry.webp",
+      "category": "weather",
+      "tokens": [
+        "dry"
+      ]
+    },
+    {
+      "word": "dusk",
+      "filename": "dusk.webp",
+      "path": "/assets/words/dusk.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "dusk"
+      ]
+    },
+    {
+      "word": "dust storm",
+      "filename": "dust storm.webp",
+      "path": "/assets/words/dust storm.webp",
+      "category": "weather",
+      "tokens": [
+        "dust",
+        "storm"
+      ]
+    },
+    {
+      "word": "each",
+      "filename": "each.webp",
+      "path": "/assets/words/each.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "each"
+      ]
+    },
+    {
+      "word": "early",
+      "filename": "early.webp",
+      "path": "/assets/words/early.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "early"
+      ]
+    },
+    {
+      "word": "either",
+      "filename": "either.webp",
+      "path": "/assets/words/either.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "either"
+      ]
+    },
+    {
+      "word": "else",
+      "filename": "else.webp",
+      "path": "/assets/words/else.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "else"
+      ]
+    },
+    {
+      "word": "evening",
+      "filename": "evening.webp",
+      "path": "/assets/words/evening.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "evening"
+      ]
+    },
+    {
+      "word": "every friday",
+      "filename": "every friday.webp",
+      "path": "/assets/words/every friday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "every",
+        "friday"
+      ]
+    },
+    {
+      "word": "every monday",
+      "filename": "every monday.webp",
+      "path": "/assets/words/every monday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "every",
+        "monday"
+      ]
+    },
+    {
+      "word": "every thursday",
+      "filename": "every thursday.webp",
+      "path": "/assets/words/every thursday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "every",
+        "thursday"
+      ]
+    },
+    {
+      "word": "every tuesday",
+      "filename": "every tuesday.webp",
+      "path": "/assets/words/every tuesday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "every",
+        "tuesday"
+      ]
+    },
+    {
+      "word": "every two months",
+      "filename": "every two months.webp",
+      "path": "/assets/words/every two months.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "every",
+        "two",
+        "months"
+      ]
+    },
+    {
+      "word": "every two weeks",
+      "filename": "every two weeks.webp",
+      "path": "/assets/words/every two weeks.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "every",
+        "two",
+        "weeks"
+      ]
+    },
+    {
+      "word": "every two years",
+      "filename": "every two years.webp",
+      "path": "/assets/words/every two years.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "every",
+        "two",
+        "years"
+      ]
+    },
+    {
+      "word": "every wednesday",
+      "filename": "every wednesday.webp",
+      "path": "/assets/words/every wednesday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "every",
+        "wednesday"
+      ]
+    },
+    {
+      "word": "every week",
+      "filename": "every week.webp",
+      "path": "/assets/words/every week.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "every",
+        "week"
+      ]
+    },
+    {
+      "word": "everyday",
+      "filename": "everyday.webp",
+      "path": "/assets/words/everyday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "everyday"
+      ]
+    },
+    {
+      "word": "everyone",
+      "filename": "everyone.webp",
+      "path": "/assets/words/everyone.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "everyone"
+      ]
+    },
+    {
+      "word": "everything",
+      "filename": "everything.webp",
+      "path": "/assets/words/everything.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "everything"
+      ]
+    },
+    {
+      "word": "february",
+      "filename": "february.webp",
+      "path": "/assets/words/february.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "february"
+      ]
+    },
+    {
+      "word": "few",
+      "filename": "few.webp",
+      "path": "/assets/words/few.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "few"
+      ]
+    },
+    {
+      "word": "friday",
+      "filename": "friday.webp",
+      "path": "/assets/words/friday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "friday"
+      ]
+    },
+    {
+      "word": "hail",
+      "filename": "hail.webp",
+      "path": "/assets/words/hail.webp",
+      "category": "weather",
+      "tokens": [
+        "hail"
+      ]
+    },
+    {
+      "word": "he",
+      "filename": "he.webp",
+      "path": "/assets/words/he.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "he"
+      ]
+    },
+    {
+      "word": "heat wave",
+      "filename": "heat wave.webp",
+      "path": "/assets/words/heat wave.webp",
+      "category": "weather",
+      "tokens": [
+        "heat",
+        "wave"
+      ]
+    },
+    {
+      "word": "heavy rain",
+      "filename": "heavy rain.webp",
+      "path": "/assets/words/heavy rain.webp",
+      "category": "weather",
+      "tokens": [
+        "heavy",
+        "rain"
+      ]
+    },
+    {
+      "word": "her",
+      "filename": "her.webp",
+      "path": "/assets/words/her.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "her"
+      ]
+    },
+    {
+      "word": "herself",
+      "filename": "herself.webp",
+      "path": "/assets/words/herself.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "herself"
+      ]
+    },
+    {
+      "word": "him",
+      "filename": "him.webp",
+      "path": "/assets/words/him.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "him"
+      ]
+    },
+    {
+      "word": "himself",
+      "filename": "himself.webp",
+      "path": "/assets/words/himself.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "himself"
+      ]
+    },
+    {
+      "word": "hot",
+      "filename": "hot.webp",
+      "path": "/assets/words/hot.webp",
+      "category": "weather",
+      "tokens": [
+        "hot"
+      ]
+    },
+    {
+      "word": "hour",
+      "filename": "hour.webp",
+      "path": "/assets/words/hour.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "hour"
+      ]
+    },
+    {
+      "word": "humid",
+      "filename": "humid.webp",
+      "path": "/assets/words/humid.webp",
+      "category": "weather",
+      "tokens": [
+        "humid"
+      ]
+    },
+    {
+      "word": "i",
+      "filename": "i.webp",
+      "path": "/assets/words/i.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "i"
+      ]
+    },
+    {
+      "word": "ice",
+      "filename": "ice.webp",
+      "path": "/assets/words/ice.webp",
+      "category": "weather",
+      "tokens": [
+        "ice"
+      ]
+    },
+    {
+      "word": "it",
+      "filename": "it.webp",
+      "path": "/assets/words/it.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "it"
+      ]
+    },
+    {
+      "word": "itself",
+      "filename": "itself.webp",
+      "path": "/assets/words/itself.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "itself"
+      ]
+    },
+    {
+      "word": "january",
+      "filename": "january.webp",
+      "path": "/assets/words/january.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "january"
+      ]
+    },
+    {
+      "word": "july",
+      "filename": "july.webp",
+      "path": "/assets/words/july.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "july"
+      ]
+    },
+    {
+      "word": "late night",
+      "filename": "late night.webp",
+      "path": "/assets/words/late night.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "late",
+        "night"
+      ]
+    },
+    {
+      "word": "late",
+      "filename": "late.webp",
+      "path": "/assets/words/late.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "late"
+      ]
+    },
+    {
+      "word": "lightning",
+      "filename": "lightning.webp",
+      "path": "/assets/words/lightning.webp",
+      "category": "weather",
+      "tokens": [
+        "lightning"
+      ]
+    },
+    {
+      "word": "many",
+      "filename": "many.webp",
+      "path": "/assets/words/many.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "many"
+      ]
+    },
+    {
+      "word": "march",
+      "filename": "march.webp",
+      "path": "/assets/words/march.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "march"
+      ]
+    },
+    {
+      "word": "me",
+      "filename": "me.webp",
+      "path": "/assets/words/me.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "me"
+      ]
+    },
+    {
+      "word": "midnight",
+      "filename": "midnight.webp",
+      "path": "/assets/words/midnight.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "midnight"
+      ]
+    },
+    {
+      "word": "monday",
+      "filename": "monday.webp",
+      "path": "/assets/words/monday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "monday"
+      ]
+    },
+    {
+      "word": "monthly",
+      "filename": "monthly.webp",
+      "path": "/assets/words/monthly.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "monthly"
+      ]
+    },
+    {
+      "word": "morning dew",
+      "filename": "morning dew.webp",
+      "path": "/assets/words/morning dew.webp",
+      "category": "weather",
+      "tokens": [
+        "morning",
+        "dew"
+      ]
+    },
+    {
+      "word": "morning",
+      "filename": "morning.webp",
+      "path": "/assets/words/morning.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "morning"
+      ]
+    },
+    {
+      "word": "my",
+      "filename": "my.webp",
+      "path": "/assets/words/my.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "my"
+      ]
+    },
+    {
+      "word": "myself",
+      "filename": "myself.webp",
+      "path": "/assets/words/myself.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "myself"
+      ]
+    },
+    {
+      "word": "next week",
+      "filename": "next week.webp",
+      "path": "/assets/words/next week.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "next",
+        "week"
+      ]
+    },
+    {
+      "word": "night",
+      "filename": "night.webp",
+      "path": "/assets/words/night.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "night"
+      ]
+    },
+    {
+      "word": "none",
+      "filename": "none.webp",
+      "path": "/assets/words/none.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "none"
+      ]
+    },
+    {
+      "word": "noon",
+      "filename": "noon.webp",
+      "path": "/assets/words/noon.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "noon"
+      ]
+    },
+    {
+      "word": "nothing",
+      "filename": "nothing.webp",
+      "path": "/assets/words/nothing.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "nothing"
+      ]
+    },
+    {
+      "word": "november",
+      "filename": "november.webp",
+      "path": "/assets/words/november.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "november"
+      ]
+    },
+    {
+      "word": "our",
+      "filename": "our.webp",
+      "path": "/assets/words/our.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "our"
+      ]
+    },
+    {
+      "word": "ourselves",
+      "filename": "ourselves.webp",
+      "path": "/assets/words/ourselves.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "ourselves"
+      ]
+    },
+    {
+      "word": "pouring rain",
+      "filename": "pouring rain.webp",
+      "path": "/assets/words/pouring rain.webp",
+      "category": "weather",
+      "tokens": [
+        "pouring",
+        "rain"
+      ]
+    },
+    {
+      "word": "rainbow",
+      "filename": "rainbow.webp",
+      "path": "/assets/words/rainbow.webp",
+      "category": "weather",
+      "tokens": [
+        "rainbow"
+      ]
+    },
+    {
+      "word": "scattered rain",
+      "filename": "scattered rain.webp",
+      "path": "/assets/words/scattered rain.webp",
+      "category": "weather",
+      "tokens": [
+        "scattered",
+        "rain"
+      ]
+    },
+    {
+      "word": "scattered snow",
+      "filename": "scattered snow.webp",
+      "path": "/assets/words/scattered snow.webp",
+      "category": "weather",
+      "tokens": [
+        "scattered",
+        "snow"
+      ]
+    },
+    {
+      "word": "second",
+      "filename": "second.webp",
+      "path": "/assets/words/second.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "second"
+      ]
+    },
+    {
+      "word": "sleep",
+      "filename": "sleep.webp",
+      "path": "/assets/words/sleep.webp",
+      "category": "actions & states",
+      "tokens": [
+        "sleep"
+      ]
+    },
+    {
+      "word": "slippery walking",
+      "filename": "slippery walking.webp",
+      "path": "/assets/words/slippery walking.webp",
+      "category": "actions & states",
+      "tokens": [
+        "slippery",
+        "walking"
+      ]
+    },
+    {
+      "word": "slippery",
+      "filename": "slippery.webp",
+      "path": "/assets/words/slippery.webp",
+      "category": "actions & states",
+      "tokens": [
+        "slippery"
+      ]
+    },
+    {
+      "word": "smog",
+      "filename": "smog.webp",
+      "path": "/assets/words/smog.webp",
+      "category": "weather",
+      "tokens": [
+        "smog"
+      ]
+    },
+    {
+      "word": "snow",
+      "filename": "snow.webp",
+      "path": "/assets/words/snow.webp",
+      "category": "weather",
+      "tokens": [
+        "snow"
+      ]
+    },
+    {
+      "word": "some",
+      "filename": "some.webp",
+      "path": "/assets/words/some.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "some"
+      ]
+    },
+    {
+      "word": "somebody",
+      "filename": "somebody.webp",
+      "path": "/assets/words/somebody.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "somebody"
+      ]
+    },
+    {
+      "word": "someone",
+      "filename": "someone.webp",
+      "path": "/assets/words/someone.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "someone"
+      ]
+    },
+    {
+      "word": "something",
+      "filename": "something.webp",
+      "path": "/assets/words/something.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "something"
+      ]
+    },
+    {
+      "word": "soon",
+      "filename": "soon.webp",
+      "path": "/assets/words/soon.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "soon"
+      ]
+    },
+    {
+      "word": "spring",
+      "filename": "spring.webp",
+      "path": "/assets/words/spring.webp",
+      "category": "weather",
+      "tokens": [
+        "spring"
+      ]
+    },
+    {
+      "word": "summer",
+      "filename": "summer.webp",
+      "path": "/assets/words/summer.webp",
+      "category": "weather",
+      "tokens": [
+        "summer"
+      ]
+    },
+    {
+      "word": "sun",
+      "filename": "sun.webp",
+      "path": "/assets/words/sun.webp",
+      "category": "weather",
+      "tokens": [
+        "sun"
+      ]
+    },
+    {
+      "word": "sunday",
+      "filename": "sunday.webp",
+      "path": "/assets/words/sunday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "sunday"
+      ]
+    },
+    {
+      "word": "sunrise",
+      "filename": "sunrise.webp",
+      "path": "/assets/words/sunrise.webp",
+      "category": "weather",
+      "tokens": [
+        "sunrise"
+      ]
+    },
+    {
+      "word": "sunset",
+      "filename": "sunset.webp",
+      "path": "/assets/words/sunset.webp",
+      "category": "weather",
+      "tokens": [
+        "sunset"
+      ]
+    },
+    {
+      "word": "temperature",
+      "filename": "temperature.webp",
+      "path": "/assets/words/temperature.webp",
+      "category": "weather",
+      "tokens": [
+        "temperature"
+      ]
+    },
+    {
+      "word": "their",
+      "filename": "their.webp",
+      "path": "/assets/words/their.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "their"
+      ]
+    },
+    {
+      "word": "them",
+      "filename": "them.webp",
+      "path": "/assets/words/them.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "them"
+      ]
+    },
+    {
+      "word": "thunder",
+      "filename": "thunder.webp",
+      "path": "/assets/words/thunder.webp",
+      "category": "weather",
+      "tokens": [
+        "thunder"
+      ]
+    },
+    {
+      "word": "thursday",
+      "filename": "thursday.webp",
+      "path": "/assets/words/thursday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "thursday"
+      ]
+    },
+    {
+      "word": "time",
+      "filename": "time.webp",
+      "path": "/assets/words/time.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "time"
+      ]
+    },
+    {
+      "word": "today",
+      "filename": "today.webp",
+      "path": "/assets/words/today.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "today"
+      ]
+    },
+    {
+      "word": "tuesday",
+      "filename": "tuesday.webp",
+      "path": "/assets/words/tuesday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "tuesday"
+      ]
+    },
+    {
+      "word": "us",
+      "filename": "us.webp",
+      "path": "/assets/words/us.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "us"
+      ]
+    },
+    {
+      "word": "we",
+      "filename": "we.webp",
+      "path": "/assets/words/we.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "we"
+      ]
+    },
+    {
+      "word": "weather",
+      "filename": "weather.webp",
+      "path": "/assets/words/weather.webp",
+      "category": "weather",
+      "tokens": [
+        "weather"
+      ]
+    },
+    {
+      "word": "wednesday",
+      "filename": "wednesday.webp",
+      "path": "/assets/words/wednesday.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "wednesday"
+      ]
+    },
+    {
+      "word": "weekend",
+      "filename": "weekend.webp",
+      "path": "/assets/words/weekend.webp",
+      "category": "calendar & time",
+      "tokens": [
+        "weekend"
+      ]
+    },
+    {
+      "word": "what",
+      "filename": "what.webp",
+      "path": "/assets/words/what.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "what"
+      ]
+    },
+    {
+      "word": "which",
+      "filename": "which.webp",
+      "path": "/assets/words/which.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "which"
+      ]
+    },
+    {
+      "word": "who",
+      "filename": "who.webp",
+      "path": "/assets/words/who.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "who"
+      ]
+    },
+    {
+      "word": "windy",
+      "filename": "windy.webp",
+      "path": "/assets/words/windy.webp",
+      "category": "weather",
+      "tokens": [
+        "windy"
+      ]
+    },
+    {
+      "word": "wintering",
+      "filename": "wintering.webp",
+      "path": "/assets/words/wintering.webp",
+      "category": "weather",
+      "tokens": [
+        "wintering"
+      ]
+    },
+    {
+      "word": "yourself",
+      "filename": "yourself.webp",
+      "path": "/assets/words/yourself.webp",
+      "category": "pronouns & people",
+      "tokens": [
+        "yourself"
+      ]
+    }
+  ],
+  "alphabets": [
+    {
+      "letter": "A",
+      "filename": "a_small.gif",
+      "path": "/assets/alphabet/a_small.gif"
+    },
+    {
+      "letter": "B",
+      "filename": "b_small.gif",
+      "path": "/assets/alphabet/b_small.gif"
+    },
+    {
+      "letter": "C",
+      "filename": "c_small.gif",
+      "path": "/assets/alphabet/c_small.gif"
+    },
+    {
+      "letter": "D",
+      "filename": "d_small.gif",
+      "path": "/assets/alphabet/d_small.gif"
+    },
+    {
+      "letter": "E",
+      "filename": "e_small.gif",
+      "path": "/assets/alphabet/e_small.gif"
+    },
+    {
+      "letter": "F",
+      "filename": "f_small.gif",
+      "path": "/assets/alphabet/f_small.gif"
+    },
+    {
+      "letter": "G",
+      "filename": "g_small.gif",
+      "path": "/assets/alphabet/g_small.gif"
+    },
+    {
+      "letter": "H",
+      "filename": "h_small.gif",
+      "path": "/assets/alphabet/h_small.gif"
+    },
+    {
+      "letter": "I",
+      "filename": "i_small.gif",
+      "path": "/assets/alphabet/i_small.gif"
+    },
+    {
+      "letter": "J",
+      "filename": "j_small.gif",
+      "path": "/assets/alphabet/j_small.gif"
+    },
+    {
+      "letter": "K",
+      "filename": "k_small.gif",
+      "path": "/assets/alphabet/k_small.gif"
+    },
+    {
+      "letter": "L",
+      "filename": "l_small.gif",
+      "path": "/assets/alphabet/l_small.gif"
+    },
+    {
+      "letter": "M",
+      "filename": "m_small.gif",
+      "path": "/assets/alphabet/m_small.gif"
+    },
+    {
+      "letter": "N",
+      "filename": "n_small.gif",
+      "path": "/assets/alphabet/n_small.gif"
+    },
+    {
+      "letter": "O",
+      "filename": "o_small.gif",
+      "path": "/assets/alphabet/o_small.gif"
+    },
+    {
+      "letter": "P",
+      "filename": "p_small.gif",
+      "path": "/assets/alphabet/p_small.gif"
+    },
+    {
+      "letter": "Q",
+      "filename": "q_small.gif",
+      "path": "/assets/alphabet/q_small.gif"
+    },
+    {
+      "letter": "R",
+      "filename": "r_small.gif",
+      "path": "/assets/alphabet/r_small.gif"
+    },
+    {
+      "letter": "S",
+      "filename": "s_small.gif",
+      "path": "/assets/alphabet/s_small.gif"
+    },
+    {
+      "letter": "T",
+      "filename": "t_small.gif",
+      "path": "/assets/alphabet/t_small.gif"
+    },
+    {
+      "letter": "U",
+      "filename": "u_small.gif",
+      "path": "/assets/alphabet/u_small.gif"
+    },
+    {
+      "letter": "V",
+      "filename": "v_small.gif",
+      "path": "/assets/alphabet/v_small.gif"
+    },
+    {
+      "letter": "W",
+      "filename": "w_small.gif",
+      "path": "/assets/alphabet/w_small.gif"
+    },
+    {
+      "letter": "X",
+      "filename": "x_small.gif",
+      "path": "/assets/alphabet/x_small.gif"
+    },
+    {
+      "letter": "Y",
+      "filename": "y_small.gif",
+      "path": "/assets/alphabet/y_small.gif"
+    },
+    {
+      "letter": "Z",
+      "filename": "z_small.gif",
+      "path": "/assets/alphabet/z_small.gif"
+    }
+  ],
+  "total_words": 120,
+  "total_alphabets": 26
+}
