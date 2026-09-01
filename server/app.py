@@ -2,11 +2,11 @@ import os
 import re
 import io
 import json
-import base64
-from typing import List, Optional
-from fastapi import FastAPI, HTTPException, Query, Body, WebSocket, WebSocketDisconnect
+from typing import Optional
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response, JSONResponse
+from starlette.responses import Response as StarletteResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from gtts import gTTS
@@ -230,7 +230,7 @@ def resolve_token_to_word(token: str) -> Optional[dict]:
 def translate_text_to_sign(payload: TranslateRequest):
     raw_text = payload.text.strip()
     if not raw_text:
-        return {"tokens": [], "original_text": "", "summary": {"words_count": 0, "letters_count": 0}}
+        return {"tokens": [], "original_text": "", "summary": {"total_items": 0, "words_matched": 0, "letters_fingerspelled": 0}}
     
     # Normalize text
     clean_text = re.sub(r'[^a-zA-Z0-9\s]', ' ', raw_text).lower()
@@ -346,8 +346,6 @@ def text_to_speech(payload: TTSRequest):
 
 
 # Serve Service Worker with correct scope header (must come before static mount)
-from starlette.responses import Response as StarletteResponse
-
 @app.get("/static/sw.js")
 def serve_sw():
     sw_path = os.path.join(STATIC_DIR, "sw.js")
