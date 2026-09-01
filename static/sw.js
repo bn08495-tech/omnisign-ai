@@ -3,7 +3,7 @@
 // 100% Offline PWA with Stale-While-Revalidate + Cache-First strategies
 // =========================================================================
 
-const CACHE_NAME = 'omnisign-v2';
+const CACHE_NAME = 'omnisign-v2.2';
 const STATIC_ASSETS = [
   '/',
   '/static/index.html',
@@ -26,39 +26,26 @@ const CDN_ASSETS = [
 
 // ─── Install: Pre-cache all critical assets ───
 self.addEventListener('install', event => {
-  console.log('[OmniSign SW] Installing...');
+  console.log('[OmniSign SW] Installing v2.2...');
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      console.log('[OmniSign SW] Pre-caching static assets');
-      // Cache local assets (guaranteed)
-      const localPromise = cache.addAll(STATIC_ASSETS).catch(err => {
+      return cache.addAll(STATIC_ASSETS).catch(err => {
         console.warn('[OmniSign SW] Some local assets failed to cache:', err);
       });
-      // Cache CDN assets (best-effort, may fail offline)
-      const cdnPromise = Promise.allSettled(
-        CDN_ASSETS.map(url =>
-          fetch(url, { mode: 'cors' })
-            .then(resp => {
-              if (resp.ok) return cache.put(url, resp);
-            })
-            .catch(() => console.warn('[OmniSign SW] CDN cache miss:', url))
-        )
-      );
-      return Promise.all([localPromise, cdnPromise]);
     }).then(() => self.skipWaiting())
   );
 });
 
 // ─── Activate: Clean up old caches ───
 self.addEventListener('activate', event => {
-  console.log('[OmniSign SW] Activating...');
+  console.log('[OmniSign SW] Activating v2.2...');
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
         keys
           .filter(key => key !== CACHE_NAME)
           .map(key => {
-            console.log('[OmniSign SW] Removing old cache:', key);
+            console.log('[OmniSign SW] Purging obsolete cache:', key);
             return caches.delete(key);
           })
       )
@@ -66,59 +53,45 @@ self.addEventListener('activate', event => {
   );
 });
 
-// ─── Fetch: Stale-While-Revalidate for HTML/JS/CSS, Cache-First for CDN ───
+// ─── Fetch: Network-First for core App scripts/styles, Cache-First for static media ───
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Skip non-GET requests (POST to API, WebSocket, etc.)
+  // Skip non-GET requests
   if (event.request.method !== 'GET') return;
 
   // Skip WebSocket and API requests
   if (url.pathname.startsWith('/ws/') || url.pathname.startsWith('/api/')) return;
 
-  // Strategy: Cache-First for CDN assets (rarely change)
-  if (!url.origin.includes(self.location.origin)) {
+  // Network-First for local JS, CSS and HTML documents to ensure instant updates
+  if (url.origin === self.location.origin && (url.pathname === '/' || url.pathname.endsWith('.html') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css'))) {
     event.respondWith(
-      caches.match(event.request).then(cached => {
-        if (cached) return cached;
-        return fetch(event.request).then(response => {
+      fetch(event.request)
+        .then(response => {
           if (response.ok) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
           }
           return response;
-        }).catch(() => {
-          // Return offline fallback if nothing cached
-          return new Response('Offline – asset unavailable', {
-            status: 503,
-            headers: { 'Content-Type': 'text/plain' }
-          });
-        });
-      })
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }
 
-  // Strategy: Stale-While-Revalidate for local assets
+  // Cache-First for media assets & CDN dependencies
   event.respondWith(
     caches.match(event.request).then(cached => {
-      const fetchPromise = fetch(event.request).then(response => {
+      if (cached) return cached;
+      return fetch(event.request).then(response => {
         if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
       }).catch(() => {
-        // Network failed – return cached or offline fallback
-        if (cached) return cached;
-        if (event.request.destination === 'document') {
-          return caches.match('/');
-        }
         return new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } });
       });
-
-      // Return cached immediately, update in background
-      return cached || fetchPromise;
     })
   );
 });
