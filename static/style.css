@@ -3952,17 +3952,17 @@ body.motion-ready [data-motion="stagger"]:not(.motion-active) > * {
 
 /* 2. Floating Accessibility Ergonomics Drawer */
 .a11y-drawer {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 16px;
+  position: fixed;
+  top: 68px;
+  right: 20px;
   width: 290px;
-  background: rgba(18, 18, 18, 0.95);
+  background: rgba(18, 18, 18, 0.96);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
   padding: 14px;
   backdrop-filter: blur(24px);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.05);
-  z-index: 1000;
+  z-index: 2200;
   display: flex;
   flex-direction: column;
   gap: 10px;

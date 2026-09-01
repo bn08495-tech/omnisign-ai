@@ -3066,15 +3066,19 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
         if (a11yPanel.classList.contains('hidden')) {
           a11yPanel.classList.remove('hidden');
+          a11yPanel.classList.remove('exiting');
         } else {
           closeA11yPanelWithAnimation();
         }
       });
       if (a11yCloseBtn) {
-        a11yCloseBtn.addEventListener('click', closeA11yPanelWithAnimation);
+        a11yCloseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeA11yPanelWithAnimation();
+        });
       }
       document.addEventListener('click', (e) => {
-        if (!a11yPanel.contains(e.target) && e.target !== a11yBtn) {
+        if (!a11yPanel.contains(e.target) && !a11yBtn.contains(e.target)) {
           closeA11yPanelWithAnimation();
         }
       });
@@ -3134,9 +3138,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (settingsBtn && settingsModal) {
-      settingsBtn.addEventListener('click', openSettingsModal);
-      if (settingsCloseBtn) settingsCloseBtn.addEventListener('click', closeSettingsModalWithAnimation);
-      if (settingsSaveBtn) settingsSaveBtn.addEventListener('click', closeSettingsModalWithAnimation);
+      settingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openSettingsModal();
+      });
+      if (settingsCloseBtn) {
+        settingsCloseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeSettingsModalWithAnimation();
+        });
+      }
+      if (settingsSaveBtn) {
+        settingsSaveBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeSettingsModalWithAnimation();
+        });
+      }
 
       settingsModal.addEventListener('click', (e) => {
         if (e.target === settingsModal) {
