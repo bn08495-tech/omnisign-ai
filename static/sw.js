@@ -3,7 +3,7 @@
 // 100% Offline PWA with Stale-While-Revalidate + Cache-First strategies
 // =========================================================================
 
-const CACHE_NAME = 'omnisign-v2.2';
+const CACHE_NAME = 'omnisign-v2.3';
 const STATIC_ASSETS = [
   '/',
   '/static/index.html',
@@ -26,7 +26,7 @@ const CDN_ASSETS = [
 
 // ─── Install: Pre-cache all critical assets ───
 self.addEventListener('install', event => {
-  console.log('[OmniSign SW] Installing v2.2...');
+  console.log('[OmniSign SW] Installing v2.3...');
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(STATIC_ASSETS).catch(err => {
@@ -38,7 +38,7 @@ self.addEventListener('install', event => {
 
 // ─── Activate: Clean up old caches ───
 self.addEventListener('activate', event => {
-  console.log('[OmniSign SW] Activating v2.2...');
+  console.log('[OmniSign SW] Activating v2.3...');
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(

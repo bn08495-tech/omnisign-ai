@@ -30,7 +30,7 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/static/icon-192.png">
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="/static/style.css?v=2.2">
+  <link rel="stylesheet" href="/static/style.css?v=2.3">
 </head>
 <body>
   <!-- Ambient background lighting mesh -->
@@ -92,14 +92,14 @@
         </div>
 
         <!-- Accessibility Ergonomics Button -->
-        <button class="action-icon-btn" id="header-a11y-btn" title="Accessibility & Contrast Controls" aria-label="Accessibility" data-magnetic="true">
+        <button class="action-icon-btn" id="header-a11y-btn" title="Accessibility & Contrast Controls" aria-label="Accessibility" data-magnetic="true" onclick="window.toggleA11yPanel(event)">
           <i data-lucide="eye" style="width:18px;height:18px;"></i>
         </button>
 
         <button class="action-icon-btn" id="header-meet-team-btn" title="Meet the Creators" aria-label="Creators" data-magnetic="true">
           <i data-lucide="users" style="width:18px;height:18px;"></i>
         </button>
-        <button class="action-icon-btn" id="header-settings-btn" title="System Settings & Cache" aria-label="Settings" data-magnetic="true">
+        <button class="action-icon-btn" id="header-settings-btn" title="System Settings & Cache" aria-label="Settings" data-magnetic="true" onclick="window.openSettingsModal(event)">
           <i data-lucide="settings" style="width:18px;height:18px;"></i>
         </button>
       </div>
@@ -1679,7 +1679,7 @@
   </div>
 
   <!-- Main Application Script -->
-  <script src="/static/app.js?v=2.2"></script>
+  <script src="/static/app.js?v=2.3"></script>
 
   <!-- Service Worker Registration for Offline PWA -->
   <script>

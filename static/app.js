@@ -3052,7 +3052,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const a11yDyslexicToggle = document.getElementById('a11y-dyslexic-toggle');
     const a11ySubtitlesToggle = document.getElementById('a11y-subtitles-toggle');
 
-    function closeA11yPanelWithAnimation() {
+    window.closeA11yPanelWithAnimation = function() {
       if (!a11yPanel || a11yPanel.classList.contains('hidden') || a11yPanel.classList.contains('exiting')) return;
       a11yPanel.classList.add('exiting');
       setTimeout(() => {
@@ -3061,25 +3061,28 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 180);
     }
 
+    window.toggleA11yPanel = function(e) {
+      if (e) e.stopPropagation();
+      if (!a11yPanel) return;
+      if (a11yPanel.classList.contains('hidden')) {
+        a11yPanel.classList.remove('hidden');
+        a11yPanel.classList.remove('exiting');
+      } else {
+        window.closeA11yPanelWithAnimation();
+      }
+    }
+
     if (a11yBtn && a11yPanel) {
-      a11yBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (a11yPanel.classList.contains('hidden')) {
-          a11yPanel.classList.remove('hidden');
-          a11yPanel.classList.remove('exiting');
-        } else {
-          closeA11yPanelWithAnimation();
-        }
-      });
+      a11yBtn.addEventListener('click', window.toggleA11yPanel);
       if (a11yCloseBtn) {
         a11yCloseBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          closeA11yPanelWithAnimation();
+          window.closeA11yPanelWithAnimation();
         });
       }
       document.addEventListener('click', (e) => {
         if (!a11yPanel.contains(e.target) && !a11yBtn.contains(e.target)) {
-          closeA11yPanelWithAnimation();
+          window.closeA11yPanelWithAnimation();
         }
       });
     }
@@ -3121,14 +3124,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsSaveBtn = document.getElementById('settings-save-btn');
     const settingsClearCacheBtn = document.getElementById('settings-clear-cache-btn');
 
-    function openSettingsModal() {
+    window.openSettingsModal = function(e) {
+      if (e) e.stopPropagation();
       if (!settingsModal) return;
       settingsModal.classList.remove('hidden');
       settingsModal.classList.remove('exiting');
       if (window.lucide) lucide.createIcons();
     }
 
-    function closeSettingsModalWithAnimation() {
+    window.closeSettingsModalWithAnimation = function() {
       if (!settingsModal || settingsModal.classList.contains('hidden') || settingsModal.classList.contains('exiting')) return;
       settingsModal.classList.add('exiting');
       setTimeout(() => {
@@ -3138,26 +3142,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (settingsBtn && settingsModal) {
-      settingsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openSettingsModal();
-      });
+      settingsBtn.addEventListener('click', window.openSettingsModal);
       if (settingsCloseBtn) {
         settingsCloseBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          closeSettingsModalWithAnimation();
+          window.closeSettingsModalWithAnimation();
         });
       }
       if (settingsSaveBtn) {
         settingsSaveBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          closeSettingsModalWithAnimation();
+          window.closeSettingsModalWithAnimation();
         });
       }
 
       settingsModal.addEventListener('click', (e) => {
         if (e.target === settingsModal) {
-          closeSettingsModalWithAnimation();
+          window.closeSettingsModalWithAnimation();
         }
       });
     }
