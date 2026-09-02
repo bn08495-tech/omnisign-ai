@@ -3,6 +3,103 @@
  * Complete Client-Side Application Engine
  */
 
+// =====================================================================
+// THEME & COLOR STUDIO ENGINE (Global Scope - must load before DOM)
+// =====================================================================
+window.toggleThemeModal = function(e) {
+  if (e) e.stopPropagation();
+  const modal = document.getElementById('theme-modal');
+  if (!modal) { console.warn('[OmniSign] theme-modal element not found'); return; }
+  if (modal.classList.contains('hidden')) {
+    modal.classList.remove('hidden');
+    modal.classList.remove('exiting');
+    if (window.lucide) lucide.createIcons();
+  } else {
+    window.closeThemeModalWithAnimation();
+  }
+};
+
+window.closeThemeModalWithAnimation = function(e) {
+  if (e && e.target && e.target.closest && e.target.closest('.theme-modal-dialog')) return;
+  const modal = document.getElementById('theme-modal');
+  if (!modal || modal.classList.contains('hidden') || modal.classList.contains('exiting')) return;
+  modal.classList.add('exiting');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    modal.classList.remove('exiting');
+  }, 200);
+};
+
+window.setThemeMode = function(mode) {
+  const root = document.documentElement;
+  if (mode === 'dark') {
+    root.removeAttribute('data-theme');
+  } else {
+    root.setAttribute('data-theme', mode);
+  }
+  // Update color-scheme meta for native UI elements
+  const isLight = (mode === 'light');
+  root.style.colorScheme = isLight ? 'light' : 'dark';
+  
+  localStorage.setItem('omnisign-theme', mode);
+
+  // Update UI active state on mode cards
+  document.querySelectorAll('.theme-mode-card').forEach(card => {
+    card.classList.toggle('active', card.dataset.mode === mode);
+  });
+
+  // Refresh icons inside theme modal
+  if (window.lucide) lucide.createIcons();
+};
+
+window.setCustomAccent = function(hexColor) {
+  if (!hexColor) return;
+  
+  const hex = hexColor.replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16) || 255;
+  const g = parseInt(hex.substring(2, 4), 16) || 255;
+  const b = parseInt(hex.substring(4, 6), 16) || 255;
+
+  document.documentElement.style.setProperty('--accent-color', hexColor);
+  document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
+  document.documentElement.style.setProperty('--accent-subtle', `rgba(${r}, ${g}, ${b}, 0.12)`);
+  document.documentElement.style.setProperty('--border-active', hexColor);
+
+  localStorage.setItem('omnisign-accent', hexColor);
+
+  const hexDisplay = document.getElementById('custom-accent-hex');
+  if (hexDisplay) hexDisplay.textContent = hexColor.toUpperCase();
+
+  document.querySelectorAll('.accent-swatch').forEach(swatch => {
+    if (swatch.dataset && swatch.dataset.color) {
+      swatch.classList.toggle('active', swatch.dataset.color.toLowerCase() === hexColor.toLowerCase());
+    }
+  });
+
+  const colorPicker = document.getElementById('theme-color-picker');
+  if (colorPicker && colorPicker.value !== hexColor) colorPicker.value = hexColor;
+};
+
+window.resetThemeToDefault = function() {
+  window.setThemeMode('dark');
+  window.setCustomAccent('#ffffff');
+  localStorage.removeItem('omnisign-theme');
+  localStorage.removeItem('omnisign-accent');
+};
+
+// Auto-restore saved theme immediately (before DOM renders to prevent flash)
+(function() {
+  const savedTheme = localStorage.getItem('omnisign-theme') || 'dark';
+  if (savedTheme !== 'dark') {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }
+  const savedAccent = localStorage.getItem('omnisign-accent');
+  if (savedAccent) {
+    document.documentElement.style.setProperty('--accent-color', savedAccent);
+    document.documentElement.style.setProperty('--border-active', savedAccent);
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize Lucide Icons
   if (window.lucide) {
@@ -3163,89 +3260,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 8C. Theme & Color Studio Engine (Light Mode, Custom Themes, Accent Picker)
-    window.toggleThemeModal = function(e) {
-      if (e) e.stopPropagation();
-      const modal = document.getElementById('theme-modal');
-      if (!modal) return;
-      if (modal.classList.contains('hidden')) {
-        modal.classList.remove('hidden');
-        modal.classList.remove('exiting');
-        if (window.lucide) lucide.createIcons();
-      } else {
-        window.closeThemeModalWithAnimation();
-      }
-    };
-
-    window.closeThemeModalWithAnimation = function(e) {
-      if (e && e.stopPropagation) e.stopPropagation();
-      const modal = document.getElementById('theme-modal');
-      if (!modal || modal.classList.contains('hidden') || modal.classList.contains('exiting')) return;
-      modal.classList.add('exiting');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-        modal.classList.remove('exiting');
-      }, 200);
-    };
-
-    window.setThemeMode = function(mode) {
-      if (mode === 'dark') {
-        document.documentElement.removeAttribute('data-theme');
-      } else {
-        document.documentElement.setAttribute('data-theme', mode);
-      }
-      localStorage.setItem('omnisign-theme', mode);
-
-      // Update UI active state on mode cards
-      document.querySelectorAll('.theme-mode-card').forEach(card => {
-        card.classList.toggle('active', card.dataset.mode === mode);
-      });
-
-      // Refresh icons inside theme modal
-      if (window.lucide) lucide.createIcons();
-    };
-
-    window.setCustomAccent = function(hexColor) {
-      if (!hexColor) return;
-      
-      // Calculate RGB for subtle glow and borders
-      const hex = hexColor.replace('#', '');
-      const r = parseInt(hex.substring(0, 2), 16) || 255;
-      const g = parseInt(hex.substring(2, 4), 16) || 255;
-      const b = parseInt(hex.substring(4, 6), 16) || 255;
-
-      document.documentElement.style.setProperty('--accent-color', hexColor);
-      document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
-      document.documentElement.style.setProperty('--accent-subtle', `rgba(${r}, ${g}, ${b}, 0.12)`);
-      document.documentElement.style.setProperty('--border-active', hexColor);
-
-      localStorage.setItem('omnisign-accent', hexColor);
-
-      // Update Hex display text and swatch buttons
-      const hexDisplay = document.getElementById('custom-accent-hex');
-      if (hexDisplay) hexDisplay.textContent = hexColor.toUpperCase();
-
-      document.querySelectorAll('.accent-swatch').forEach(swatch => {
-        swatch.classList.toggle('active', swatch.dataset.color.toLowerCase() === hexColor.toLowerCase());
-      });
-
-      const colorPicker = document.getElementById('theme-color-picker');
-      if (colorPicker && colorPicker.value !== hexColor) colorPicker.value = hexColor;
-    };
-
-    window.resetThemeToDefault = function() {
-      window.setThemeMode('dark');
-      window.setCustomAccent('#ffffff');
-      localStorage.removeItem('omnisign-theme');
-      localStorage.removeItem('omnisign-accent');
-    };
-
-    // Auto-restore saved theme preferences on startup
-    const savedTheme = localStorage.getItem('omnisign-theme') || 'dark';
-    const savedAccent = localStorage.getItem('omnisign-accent');
-    window.setThemeMode(savedTheme);
-    if (savedAccent) {
-      window.setCustomAccent(savedAccent);
+    // 8C. Theme restoration on DOM ready (functions already in global scope above)
+    const savedThemeDom = localStorage.getItem('omnisign-theme') || 'dark';
+    const savedAccentDom = localStorage.getItem('omnisign-accent');
+    window.setThemeMode(savedThemeDom);
+    if (savedAccentDom) {
+      window.setCustomAccent(savedAccentDom);
     }
 
     // Settings Pill Selectors (FPS, Hold Time, TTS Speed)
