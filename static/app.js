@@ -3164,14 +3164,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 8C. Theme & Color Studio Engine (Light Mode, Custom Themes, Accent Picker)
-    const themeModal = document.getElementById('theme-modal');
-    
     window.toggleThemeModal = function(e) {
       if (e) e.stopPropagation();
-      if (!themeModal) return;
-      if (themeModal.classList.contains('hidden')) {
-        themeModal.classList.remove('hidden');
-        themeModal.classList.remove('exiting');
+      const modal = document.getElementById('theme-modal');
+      if (!modal) return;
+      if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        modal.classList.remove('exiting');
         if (window.lucide) lucide.createIcons();
       } else {
         window.closeThemeModalWithAnimation();
@@ -3180,11 +3179,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.closeThemeModalWithAnimation = function(e) {
       if (e && e.stopPropagation) e.stopPropagation();
-      if (!themeModal || themeModal.classList.contains('hidden') || themeModal.classList.contains('exiting')) return;
-      themeModal.classList.add('exiting');
+      const modal = document.getElementById('theme-modal');
+      if (!modal || modal.classList.contains('hidden') || modal.classList.contains('exiting')) return;
+      modal.classList.add('exiting');
       setTimeout(() => {
-        themeModal.classList.add('hidden');
-        themeModal.classList.remove('exiting');
+        modal.classList.add('hidden');
+        modal.classList.remove('exiting');
       }, 200);
     };
 

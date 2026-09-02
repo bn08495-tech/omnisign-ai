@@ -3,7 +3,7 @@
 // 100% Offline PWA with Stale-While-Revalidate + Cache-First strategies
 // =========================================================================
 
-const CACHE_NAME = 'omnisign-v2.5';
+const CACHE_NAME = 'omnisign-v2.6';
 const STATIC_ASSETS = [
   '/',
   '/static/index.html',
