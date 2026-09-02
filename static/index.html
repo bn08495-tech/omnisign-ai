@@ -30,7 +30,7 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/static/icon-192.png">
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="/static/style.css?v=2.4">
+  <link rel="stylesheet" href="/static/style.css?v=2.5">
 </head>
 <body>
   <!-- Ambient background lighting mesh -->
@@ -90,6 +90,11 @@
           </select>
           <span class="dialect-pill" id="header-dialect-pill">ASL</span>
         </div>
+
+        <!-- Theme & Appearance Studio Trigger Button -->
+        <button class="action-icon-btn" id="header-theme-btn" title="Theme & Color Studio" aria-label="Themes" data-magnetic="true" onclick="window.toggleThemeModal(event)">
+          <i data-lucide="palette" style="width:18px;height:18px;"></i>
+        </button>
 
         <button class="action-icon-btn" id="header-meet-team-btn" title="Meet the Creators" aria-label="Creators" data-magnetic="true">
           <i data-lucide="users" style="width:18px;height:18px;"></i>
@@ -242,6 +247,89 @@
 
         </div>
       </div>
+
+    <!-- ================= THEME & COLOR STUDIO MODAL ================= -->
+    <div id="theme-modal" class="theme-modal-backdrop hidden" onclick="window.closeThemeModalWithAnimation(event)">
+      <div class="theme-modal-dialog" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="theme-studio-title">
+        <div class="theme-modal-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="theme-icon-badge">
+              <i data-lucide="palette" style="width:20px;height:20px;color:var(--text-primary);"></i>
+            </div>
+            <div>
+              <h2 id="theme-studio-title" class="theme-modal-title">Theme & Color Studio</h2>
+              <p class="theme-modal-sub">Light Mode, Custom Themes & Accent Color Engine</p>
+            </div>
+          </div>
+          <button id="theme-modal-close-btn" class="theme-close-btn" onclick="window.closeThemeModalWithAnimation()" aria-label="Close Theme Studio">✕</button>
+        </div>
+
+        <div class="theme-modal-body">
+          <!-- Section 1: Appearance Mode -->
+          <div class="theme-section">
+            <div class="theme-sec-title">
+              <i data-lucide="sun-moon" style="width:14px;height:14px;"></i> APPEARANCE MODES
+            </div>
+            <div class="theme-grid-modes">
+              <button class="theme-mode-card active" data-mode="dark" onclick="window.setThemeMode('dark')">
+                <div class="theme-mode-icon"><i data-lucide="moon" style="width:18px;height:18px;"></i></div>
+                <span class="theme-mode-name">Dark Mode</span>
+                <span class="theme-mode-sub">Minimal Vercel Black</span>
+              </button>
+              <button class="theme-mode-card" data-mode="light" onclick="window.setThemeMode('light')">
+                <div class="theme-mode-icon"><i data-lucide="sun" style="width:18px;height:18px;"></i></div>
+                <span class="theme-mode-name">Light Mode</span>
+                <span class="theme-mode-sub">Studio Clean White</span>
+              </button>
+              <button class="theme-mode-card" data-mode="cyberpunk" onclick="window.setThemeMode('cyberpunk')">
+                <div class="theme-mode-icon"><i data-lucide="zap" style="width:18px;height:18px;"></i></div>
+                <span class="theme-mode-name">Cyberpunk</span>
+                <span class="theme-mode-sub">Neon Electric Cyan</span>
+              </button>
+              <button class="theme-mode-card" data-mode="emerald" onclick="window.setThemeMode('emerald')">
+                <div class="theme-mode-icon"><i data-lucide="sparkle" style="width:18px;height:18px;"></i></div>
+                <span class="theme-mode-name">Emerald Mint</span>
+                <span class="theme-mode-sub">Biophilic Forest</span>
+              </button>
+              <button class="theme-mode-card" data-mode="sunset" onclick="window.setThemeMode('sunset')">
+                <div class="theme-mode-icon"><i data-lucide="flame" style="width:18px;height:18px;"></i></div>
+                <span class="theme-mode-name">Sunset Glow</span>
+                <span class="theme-mode-sub">Coral & Plum Glow</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section 2: Custom Accent Color Engine -->
+          <div class="theme-section" style="margin-top:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <div class="theme-sec-title" style="margin-bottom:0;">
+                <i data-lucide="pipette" style="width:14px;height:14px;"></i> CUSTOM ACCENT PALETTE
+              </div>
+              <span id="custom-accent-hex" style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">#3B82F6</span>
+            </div>
+            <div class="theme-accent-swatches">
+              <button class="accent-swatch active" data-color="#ffffff" style="background:#ffffff;" title="Monochrome White" onclick="window.setCustomAccent('#ffffff')"></button>
+              <button class="accent-swatch" data-color="#3b82f6" style="background:#3b82f6;" title="Electric Blue" onclick="window.setCustomAccent('#3b82f6')"></button>
+              <button class="accent-swatch" data-color="#8b5cf6" style="background:#8b5cf6;" title="Neon Violet" onclick="window.setCustomAccent('#8b5cf6')"></button>
+              <button class="accent-swatch" data-color="#10b981" style="background:#10b981;" title="Emerald Mint" onclick="window.setCustomAccent('#10b981')"></button>
+              <button class="accent-swatch" data-color="#f59e0b" style="background:#f59e0b;" title="Warm Amber" onclick="window.setCustomAccent('#f59e0b')"></button>
+              <button class="accent-swatch" data-color="#f43f5e" style="background:#f43f5e;" title="Rose Pink" onclick="window.setCustomAccent('#f43f5e')"></button>
+              <button class="accent-swatch" data-color="#06b6d4" style="background:#06b6d4;" title="Cyan Glow" onclick="window.setCustomAccent('#06b6d4')"></button>
+              
+              <div class="accent-color-picker-wrapper" title="Pick Any Custom Color">
+                <input type="color" id="theme-color-picker" value="#3b82f6" oninput="window.setCustomAccent(this.value)">
+                <i data-lucide="palette" style="width:14px;height:14px;color:var(--text-primary);pointer-events:none;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="theme-modal-footer">
+          <button class="theme-footer-btn reset" onclick="window.resetThemeToDefault()">Reset Defaults</button>
+          <button class="theme-footer-btn save" onclick="window.closeThemeModalWithAnimation()">Apply & Save</button>
+        </div>
+      </div>
+    </div>
 
     <!-- ================= MAIN WORKSPACE ================= -->
     <main class="app-main">
@@ -1678,7 +1766,7 @@
   </div>
 
   <!-- Main Application Script -->
-  <script src="/static/app.js?v=2.4"></script>
+  <script src="/static/app.js?v=2.5"></script>
 
   <!-- Service Worker Registration for Offline PWA -->
   <script>

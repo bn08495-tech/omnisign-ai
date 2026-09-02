@@ -3163,6 +3163,91 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    // 8C. Theme & Color Studio Engine (Light Mode, Custom Themes, Accent Picker)
+    const themeModal = document.getElementById('theme-modal');
+    
+    window.toggleThemeModal = function(e) {
+      if (e) e.stopPropagation();
+      if (!themeModal) return;
+      if (themeModal.classList.contains('hidden')) {
+        themeModal.classList.remove('hidden');
+        themeModal.classList.remove('exiting');
+        if (window.lucide) lucide.createIcons();
+      } else {
+        window.closeThemeModalWithAnimation();
+      }
+    };
+
+    window.closeThemeModalWithAnimation = function(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      if (!themeModal || themeModal.classList.contains('hidden') || themeModal.classList.contains('exiting')) return;
+      themeModal.classList.add('exiting');
+      setTimeout(() => {
+        themeModal.classList.add('hidden');
+        themeModal.classList.remove('exiting');
+      }, 200);
+    };
+
+    window.setThemeMode = function(mode) {
+      if (mode === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', mode);
+      }
+      localStorage.setItem('omnisign-theme', mode);
+
+      // Update UI active state on mode cards
+      document.querySelectorAll('.theme-mode-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.mode === mode);
+      });
+
+      // Refresh icons inside theme modal
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.setCustomAccent = function(hexColor) {
+      if (!hexColor) return;
+      
+      // Calculate RGB for subtle glow and borders
+      const hex = hexColor.replace('#', '');
+      const r = parseInt(hex.substring(0, 2), 16) || 255;
+      const g = parseInt(hex.substring(2, 4), 16) || 255;
+      const b = parseInt(hex.substring(4, 6), 16) || 255;
+
+      document.documentElement.style.setProperty('--accent-color', hexColor);
+      document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
+      document.documentElement.style.setProperty('--accent-subtle', `rgba(${r}, ${g}, ${b}, 0.12)`);
+      document.documentElement.style.setProperty('--border-active', hexColor);
+
+      localStorage.setItem('omnisign-accent', hexColor);
+
+      // Update Hex display text and swatch buttons
+      const hexDisplay = document.getElementById('custom-accent-hex');
+      if (hexDisplay) hexDisplay.textContent = hexColor.toUpperCase();
+
+      document.querySelectorAll('.accent-swatch').forEach(swatch => {
+        swatch.classList.toggle('active', swatch.dataset.color.toLowerCase() === hexColor.toLowerCase());
+      });
+
+      const colorPicker = document.getElementById('theme-color-picker');
+      if (colorPicker && colorPicker.value !== hexColor) colorPicker.value = hexColor;
+    };
+
+    window.resetThemeToDefault = function() {
+      window.setThemeMode('dark');
+      window.setCustomAccent('#ffffff');
+      localStorage.removeItem('omnisign-theme');
+      localStorage.removeItem('omnisign-accent');
+    };
+
+    // Auto-restore saved theme preferences on startup
+    const savedTheme = localStorage.getItem('omnisign-theme') || 'dark';
+    const savedAccent = localStorage.getItem('omnisign-accent');
+    window.setThemeMode(savedTheme);
+    if (savedAccent) {
+      window.setCustomAccent(savedAccent);
+    }
+
     // Settings Pill Selectors (FPS, Hold Time, TTS Speed)
     document.querySelectorAll('#settings-fps-group .settings-pill').forEach(pill => {
       pill.addEventListener('click', () => {
