@@ -12,7 +12,7 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, KeepTogether, HRFlowable
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, KeepTogether, HRFlowable, Image as RLImage
 )
 from reportlab.pdfgen import canvas
 
@@ -312,29 +312,13 @@ Output: Detected Sign Label L, Confidence Score C
 4. Steady-State Hold Buffer: If Sign matches for 1.2s -> Append to Sentence Buffer."""
     story.append(Paragraph(code_algo2.replace("\n", "<br/>").replace(" ", "&nbsp;"), code_style))
 
-    # Flowchart Block
-    story.append(Paragraph("Complete Bidirectional Dataflow Diagram", h2_style))
-    flowchart_text = """[VOCAL USER] ──> Audio / Mic ──> Web Speech API ──> Phonetic Normalizer
-                                                       │
-                                                       ▼
-                                            Greedy Phrase Matcher
-                                            ├── Found Word? ──> Load 120+ Sign Video (.webp)
-                                            └── Unknown?    ──> Decompose to Alphabet (.gif)
-                                                                       │
-                                                                       ▼
-                                                          Synchronized Video Player
-
-[DEAF USER] ──> Camera Feed ──> MediaPipe Hands ──> 21-Point Joint Landmark Extraction
-                                                       │
-                                                       ▼
-                                            Geometric Angle Classifier
-                                            ├── Single Character / Letter (A-Z)
-                                            └── Conversational Gesture (Hello, Yes, OK, Love)
-                                                       │
-                                                       ▼
-                                            Sentence Buffer ──> Neural TTS Audio Voice"""
-    story.append(Paragraph(flowchart_text.replace("\n", "<br/>").replace(" ", "&nbsp;"), code_style))
-    story.append(Spacer(1, 10))
+    # Flowchart / Mind Map Block
+    story.append(Paragraph("Complete System Architecture & Dataflow Mind Map", h2_style))
+    mindmap_img_path = "/home/computer/Desktop/sign lang/assets/mindmap.png"
+    if os.path.exists(mindmap_img_path):
+        img_flowable = RLImage(mindmap_img_path, width=6.8 * inch, height=4.53 * inch)
+        story.append(KeepTogether([img_flowable]))
+        story.append(Spacer(1, 10))
 
     # =========================================================================
     # 5. DESIGN DECISIONS & IMPLEMENTATION APPROACH

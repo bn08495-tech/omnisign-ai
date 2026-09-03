@@ -1444,34 +1444,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Camera start / stop toggles
   async function startS2VCamera() {
+    console.log('[OmniSign Camera] Starting camera...');
     s2vCamErrorBox.classList.add('hidden');
-    try {
-      if (!AppState.s2v.hands) setupS2VHands();
-      
-      const stream = await getResilientUserMedia();
-      s2vVideo.srcObject = stream;
-      await s2vVideo.play();
 
-      if (window.Camera) {
-        AppState.s2v.camera = new Camera(s2vVideo, {
-          onFrame: async () => {
-            if (AppState.s2v.hands && AppState.s2v.isCamActive) {
-              await AppState.s2v.hands.send({ image: s2vVideo });
-              await faceDetector.sendFrame(s2vVideo);
-            }
-          },
-          width: 640,
-          height: 480
-        });
-        AppState.s2v.camera.start();
+    // Show a loading state
+    const camStatusMsg = document.getElementById('s2v-cam-status-msg');
+    if (camStatusMsg) camStatusMsg.textContent = 'Connecting to camera…';
+
+    try {
+      // 1. Setup MediaPipe Hands if available
+      try {
+        if (!AppState.s2v.hands) setupS2VHands();
+      } catch (mpErr) {
+        console.warn('[OmniSign Camera] MediaPipe Hands setup skipped:', mpErr);
       }
 
+      // 2. Acquire camera stream
+      console.log('[OmniSign Camera] Requesting getUserMedia...');
+      const stream = await getResilientUserMedia();
+      console.log('[OmniSign Camera] Got stream:', stream.getVideoTracks().map(t => t.label));
+
+      s2vVideo.srcObject = stream;
+      
+      // Wait for video to be ready before hiding placeholder
+      await new Promise((resolve, reject) => {
+        s2vVideo.onloadedmetadata = () => resolve();
+        s2vVideo.onerror = (e) => reject(new Error('Video element error: ' + e));
+        setTimeout(() => resolve(), 3000); // timeout safety net
+      });
+
+      await s2vVideo.play();
+      console.log('[OmniSign Camera] Video playing, dimensions:', s2vVideo.videoWidth, 'x', s2vVideo.videoHeight);
+
+      // 3. Start MediaPipe Camera loop IF available, otherwise use raw requestAnimationFrame
+      if (window.Camera && AppState.s2v.hands) {
+        try {
+          AppState.s2v.camera = new Camera(s2vVideo, {
+            onFrame: async () => {
+              if (AppState.s2v.hands && AppState.s2v.isCamActive) {
+                try {
+                  await AppState.s2v.hands.send({ image: s2vVideo });
+                } catch(e) {}
+                try {
+                  await faceDetector.sendFrame(s2vVideo);
+                } catch(e) {}
+              }
+            },
+            width: 640,
+            height: 480
+          });
+          AppState.s2v.camera.start();
+          console.log('[OmniSign Camera] MediaPipe Camera loop started');
+        } catch (camErr) {
+          console.warn('[OmniSign Camera] MediaPipe Camera helper failed, using raw stream:', camErr);
+        }
+      } else {
+        console.log('[OmniSign Camera] MediaPipe Camera helper not available, using raw video stream');
+        // Fallback: run detection loop via requestAnimationFrame
+        function fallbackDetectionLoop() {
+          if (!AppState.s2v.isCamActive) return;
+          if (AppState.s2v.hands && s2vVideo.readyState >= 2) {
+            AppState.s2v.hands.send({ image: s2vVideo }).catch(() => {});
+            faceDetector.sendFrame(s2vVideo).catch(() => {});
+          }
+          requestAnimationFrame(fallbackDetectionLoop);
+        }
+        requestAnimationFrame(fallbackDetectionLoop);
+      }
+
+      // 4. Update UI state
       AppState.s2v.isCamActive = true;
       s2vCamPlaceholder.classList.add('hidden');
       s2vCamToggle.innerHTML = '<i data-lucide="video-off"></i><span>Stop Camera</span>';
       if (window.lucide) lucide.createIcons();
+      console.log('[OmniSign Camera] Camera is ACTIVE');
     } catch (err) {
-      console.error('Camera access error:', err);
+      console.error('[OmniSign Camera] Camera access error:', err.name, err.message);
+      if (camStatusMsg) camStatusMsg.textContent = 'Camera connection failed. Try again or use Virtual Demo Pad.';
       showCameraError(err);
     }
   }
