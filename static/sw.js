@@ -3,7 +3,7 @@
 // 100% Offline PWA with Stale-While-Revalidate + Cache-First strategies
 // =========================================================================
 
-const CACHE_NAME = 'omnisign-v2.9';
+const CACHE_NAME = 'omnisign-v2.10';
 const STATIC_ASSETS = [
   '/',
   '/static/index.html',
@@ -11,22 +11,30 @@ const STATIC_ASSETS = [
   '/static/app.js',
   '/static/manifest.json',
   '/static/icon-192.png',
-  '/static/icon-512.png'
+  '/static/icon-512.png',
+  // Self-hosted MediaPipe pipeline (hands model runs fully offline)
+  '/static/mediapipe/camera_utils/camera_utils.js',
+  '/static/mediapipe/control_utils/control_utils.js',
+  '/static/mediapipe/drawing_utils/drawing_utils.js',
+  '/static/mediapipe/hands/hands.js',
+  '/static/mediapipe/hands/hands.binarypb',
+  '/static/mediapipe/hands/hands_solution_packed_assets_loader.js',
+  '/static/mediapipe/hands/hands_solution_simd_wasm_bin.js',
+  '/static/mediapipe/hands/hands_solution_simd_wasm_bin.data',
+  '/static/vendor/lucide.js'
 ];
 
-const CDN_ASSETS = [
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap',
-  'https://unpkg.com/lucide@latest',
-  'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js',
-  'https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js',
-  'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js',
-  'https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js',
-  'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js'
+// Heavy binaries cached lazily on first fetch (cache-first strategy below)
+const HEAVY_MEDIAPIPE_ASSETS = [
+  '/static/mediapipe/hands/hands_solution_simd_wasm_bin.wasm',
+  '/static/mediapipe/hands/hands_solution_packed_assets.data',
+  '/static/mediapipe/hands/hand_landmark_full.tflite',
+  '/static/mediapipe/hands/hand_landmark_lite.tflite'
 ];
 
 // ─── Install: Pre-cache all critical assets ───
 self.addEventListener('install', event => {
-  console.log('[OmniSign SW] Installing v2.3...');
+  console.log('[OmniSign SW] Installing v2.10...');
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(STATIC_ASSETS).catch(err => {
@@ -38,7 +46,7 @@ self.addEventListener('install', event => {
 
 // ─── Activate: Clean up old caches ───
 self.addEventListener('activate', event => {
-  console.log('[OmniSign SW] Activating v2.3...');
+  console.log('[OmniSign SW] Activating v2.10...');
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
@@ -79,7 +87,8 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Cache-First for media assets & CDN dependencies
+  // Cache-First for media assets, heavy model binaries & remaining dependencies.
+  // Heavy MediaPipe binaries (.wasm/.data/.tflite) are fetched once and cached for offline use.
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;

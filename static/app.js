@@ -1364,10 +1364,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Context detection: explain WHY the camera is unavailable and offer an escape hatch
+  function appendCameraContextHelp() {
+    const inIframe = window.self !== window.top;
+    const insecure = window.isSecureContext === false;
+    let msg = '';
+    if (insecure) {
+      msg = 'This page is not in a secure context. Camera access requires HTTPS or http://localhost.';
+    } else if (inIframe) {
+      msg = 'The camera is blocked because this app is embedded in a preview frame. Open it in its own browser tab to grant camera access.';
+    } else {
+      return;
+    }
+    const note = document.createElement('div');
+    note.style.marginTop = '8px';
+    const p = document.createElement('p');
+    p.style.cssText = 'font-size:11px;color:var(--text-muted);margin:0 0 6px 0;';
+    p.textContent = msg;
+    const btn = document.createElement('button');
+    btn.className = 'cta-button secondary-cta mini-cta';
+    btn.style.cssText = 'margin-top:4px;';
+    btn.innerHTML = '<i data-lucide="external-link" style="width:13px;height:13px;"></i> Open in new tab';
+    btn.addEventListener('click', () => window.open(window.location.href, '_blank', 'noopener'));
+    note.appendChild(p);
+    note.appendChild(btn);
+    s2vCamErrorBox.appendChild(note);
+    if (window.lucide) lucide.createIcons();
+  }
+
   // Resilient multi-fallback Camera Media Stream acquisition
   async function getResilientUserMedia() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error('InsecureContext');
+      const ctxErr = new Error('InsecureContext');
+      ctxErr.inIframe = window.self !== window.top;
+      throw ctxErr;
     }
 
     const constraintCascade = [
@@ -1403,8 +1433,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function showCameraError(err) {
     s2vCamErrorBox.classList.remove('hidden');
     if (window.lucide) lucide.createIcons();
+    appendCameraContextHelp();
 
-    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+    const inIframe = window.self !== window.top;
+    if ((err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') && inIframe) {
+      s2vErrorTitle.textContent = 'Camera Blocked in Preview';
+      s2vErrorDesc.textContent = 'This app is embedded in a preview frame, so the browser refuses to start the camera here. Use the "Open in new tab" button below - the camera will work in its own tab.';
+    } else if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
       s2vErrorTitle.textContent = 'Camera Permission Blocked';
       s2vErrorDesc.textContent = 'Camera access was denied. Click the lock/camera icon in your address bar, change camera permission to "Allow", and try again.';
     } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
@@ -1414,8 +1449,10 @@ document.addEventListener('DOMContentLoaded', () => {
       s2vErrorTitle.textContent = 'Camera In Use';
       s2vErrorDesc.textContent = 'Your webcam is being used by another application or browser tab. Please close other camera apps and retry.';
     } else if (err.message === 'InsecureContext') {
-      s2vErrorTitle.textContent = 'Insecure Web Origin';
-      s2vErrorDesc.textContent = 'Browsers require HTTPS or http://localhost:8000 for webcam access. Please access via localhost.';
+      s2vErrorTitle.textContent = err.inIframe ? 'Camera Blocked in Preview' : 'Insecure Web Origin';
+      s2vErrorDesc.textContent = err.inIframe
+        ? 'This app is running inside an embedded preview frame that blocks camera access. Open it in its own browser tab and connect the camera there.'
+        : 'Browsers require HTTPS or http://localhost:8000 for webcam access. Please access via localhost.';
     } else {
       s2vErrorTitle.textContent = 'Camera Access Issue';
       s2vErrorDesc.textContent = `Could not start webcam (${err.name || err.message}). Try the Virtual Demo Pad below!`;
@@ -1450,7 +1487,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Camera start / stop toggles
+  let s2vStartInFlight = false;
   async function startS2VCamera() {
+    if (s2vStartInFlight) {
+      console.log('[OmniSign Camera] Start already in progress - ignoring duplicate click');
+      return;
+    }
+    s2vStartInFlight = true;
     console.log('[OmniSign Camera] Starting camera...');
     s2vCamErrorBox.classList.add('hidden');
 
