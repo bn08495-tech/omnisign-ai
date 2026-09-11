@@ -91,6 +91,32 @@ Interactive API Documentation is available at **[http://localhost:8000/docs](htt
 
 ---
 
+## 🛠️ Troubleshooting & Quick Error Resolution
+
+For an exhaustive diagnostic matrix and step-by-step resolution guide, refer to **[TROUBLESHOOTING.md](file:///home/computer/Desktop/sign%20lang/TROUBLESHOOTING.md)**.
+
+| Error / Issue | Root Cause | Solution |
+| :--- | :--- | :--- |
+| **Camera Access Denied / Blank Feed** | Browser blocked webcam or non-HTTPS context | Click URL bar lock icon → Allow camera; open on `localhost` or HTTPS Vercel URL |
+| **MediaPipe Camera Not Loading** | CDN latency or blocked script execution | v2.8+ automatically activates fallback raw `getUserMedia` stream loop |
+| **Microphone Speech Not Recognized** | Browser speech recognition limitation | Use Google Chrome or MS Edge; grant microphone permission |
+| **Port 8000 Already in Use** | Previous Uvicorn instance still running in background | Run `kill -9 $(lsof -ti:8000)` before restarting server |
+| **ModuleNotFoundError (FastAPI / Requests)** | Executing outside the virtual environment | Run `./install.sh` or activate `.venv`: `source .venv/bin/activate` |
+| **Stale JavaScript / Old UI Elements** | Service worker (`sw.js`) caching previous version | Force hard refresh (`Ctrl+Shift+R` or `Cmd+Shift+R`); clear site data in DevTools |
+
+---
+
+## 🏆 Design Championship 2024–2026 Submission
+
+This project is built and documented for the **[Design Championship](https://designchampionship.in)** competition.
+
+* 📑 **Comprehensive Competition & Journey Report**: **[DESIGN_CHAMPIONSHIP_COMPETITION_REPORT.md](file:///home/computer/Desktop/sign%20lang/DESIGN_CHAMPIONSHIP_COMPETITION_REPORT.md)**  
+  *(Includes complete prompt history from scratch, engineering challenges & error rectification logs, design system evolution, and academic AI disclosure).*
+* 📄 **Printable Academic Documentation (PDF)**: **[OmniSign_AI_Project_Documentation.pdf](file:///home/computer/Desktop/sign%20lang/OmniSign_AI_Project_Documentation.pdf)**  
+  *(Built with ReportLab, featuring complete flowcharts, algorithms, and evaluation metrics).*
+
+---
+
 ## 👥 The Creators & Engineering Team
 
 1. **Stotra Gandhi** — *Team Lead & Logic Builder*
@@ -108,4 +134,5 @@ Interactive API Documentation is available at **[http://localhost:8000/docs](htt
 
 - **Team Contributions**: Problem formulation, dataset gathering & structuring, fine-tuning ML models on custom and open-source sign data with OpenCV and TensorFlow, core phonetic tokenizer, letter fallback logic, and CI/CD pipelines.
 - **AI Contributions**: Responsive glassmorphism frontend UI/UX, client-side MediaPipe & Web Speech integration, FastAPI backend scaffolding, service worker caching, and interactive animations.
+
 
