@@ -11,16 +11,56 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
   
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
-  
-  <!-- MediaPipe Hands, FaceMesh & Camera Utils -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+  <!-- Lucide Icons (self-hosted fallback + CDN) -->
+  <script src="/static/vendor/lucide.js"></script>
+  <script>window.lucide || document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');</script>
+
+  <!-- MediaPipe Hands & Camera Utils (self-hosted: works offline / behind firewalls) -->
+  <script src="/static/mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="/static/mediapipe/control_utils/control_utils.js"></script>
+  <script src="/static/mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="/static/mediapipe/hands/hands.js"></script>
+  <!-- Redirect all Hands/FaceMesh model files (WASM + .tflite) to self-hosted copies -->
+  <script>
+    (function () {
+      var LOCAL_DIRS = { Hands: '/static/mediapipe/hands/', FaceMesh: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/' };
+      ['Hands', 'FaceMesh'].forEach(function (name) {
+        var Real = window[name];
+        function wrap(Ctor) {
+          return function (opts) {
+            opts = opts || {};
+            opts.locateFile = function (file) { return LOCAL_DIRS[name] + file; };
+            return new Ctor(opts);
+          };
+        }
+        if (Real) {
+          window[name] = wrap(Real);
+        } else {
+          Object.defineProperty(window, name, {
+            configurable: true,
+            set: function (v) { Real = v; },
+            get: function () { return Real ? wrap(Real) : undefined; }
+          });
+        }
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      function loadRemote() {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js';
+        s.crossOrigin = 'anonymous';
+        s.onerror = function () { console.warn('[OmniSign] FaceMesh CDN unavailable - expression badges disabled (hands unaffected).'); };
+        document.head.appendChild(s);
+      }
+      if (window.FaceMesh) return;
+      var probe = new Image();
+      probe.onload = loadRemote;
+      probe.onerror = function () { console.warn('[OmniSign] Offline - FaceMesh disabled (hands unaffected).'); };
+      probe.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js';
+    })();
+  </script>
   
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="/static/manifest.json">
@@ -30,7 +70,7 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/static/icon-192.png">
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="/static/style.css?v=2.9">
+  <link rel="stylesheet" href="/static/style.css?v=2.10">
 </head>
 <body>
   <!-- Ambient background lighting mesh -->
