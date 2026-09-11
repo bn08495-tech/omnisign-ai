@@ -238,6 +238,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Sliding Nav Pill
     updateNavDockIndicator();
 
+    // On mobile, auto-scroll active tab into view within scrollable dock
+    if (activeTab && window.innerWidth <= 768) {
+      try {
+        activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      } catch (e) {}
+    }
+
     // Refresh icons
     if (window.lucide) lucide.createIcons();
 
